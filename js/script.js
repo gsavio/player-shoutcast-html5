@@ -168,8 +168,12 @@ function Player() {
 	this.play = function() {
         audio.play();
         
-        if(typeof(Storage) !== 'underfined') {
-            audio.volume = intToDecimal(localStorage.getItem('volume'));
+        if(typeof(Storage) !== 'undefined') {
+            if(localStorage.getItem('volume') !== null) {
+                audio.volume = intToDecimal(localStorage.getItem('volume'));
+            } else {
+                audio.volume = intToDecimal(document.getElementById('volume').value);
+            }
         } else {
             audio.volume = intToDecimal(document.getElementById('volume').value);
         }
