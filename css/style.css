@@ -1,0 +1,243 @@
+@charset 'utf-8';
+@import url('https://fonts.googleapis.com/css?family=Share:400i,700i');
+@import url('bootstrap.min.css');
+
+title {
+    text-transform: capitalize !important;
+}
+.site-capa {
+    min-width: 100%;
+    min-height: 100%;
+    position: fixed;
+    background: url('../img/background.jpg') no-repeat;
+    background-position: center;
+    background-size: cover;
+    transition: background-image 1s;
+    background-position: center;
+    background-attachment: fixed;
+}
+#capaBg {
+    min-width: 100%;
+    min-height: 100%;
+    position: absolute;
+    background-position: center;
+    background-size: cover;
+    transition: background-image 1s;
+    background-position: center;
+    background-attachment: fixed;
+    filter: blur(10px);
+    z-index: 1;
+}
+.mascara-bg {
+    min-width: 100%;
+    min-height: 100%;
+    position: absolute;
+    background: radial-gradient(transparent 20%, #000 85%);
+    z-index: 2;
+}
+.web-player {
+    margin-top: 10%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    padding: 5px;
+    position: relative;
+    z-index: 3;
+}
+.capa-album {
+    max-width: 200px;
+    height: 200px;
+    margin: 10px auto;
+    background: url('../img/bg-capa.jpg') no-repeat;
+    background-size: cover;
+    border: 2px solid #fff;
+    box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+    transition: background-image 1s;
+}
+.marca-dagua {
+    width: 89px;
+    height: 35px;
+    background: url(../img/logo.png) no-repeat;
+    background-size: auto 35px;
+    opacity: 0.5;
+    position: relative;
+    bottom: 36px;
+    right: -1px;
+    z-index: 5;
+}
+#capaAtual {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 1s;
+}
+.logo {
+    display: none;
+}
+.info-faixa-atual {
+    font-family: 'Share', cursive;
+    text-align: center;
+}
+.info-faixa-atual h2 {
+    font-size: 22px;
+    font-weight: 700;
+}
+.info-faixa-atual h3 {
+    font-size: 18px;
+    font-weight: 400;
+}
+.play-pause {
+    font-size: 65px;
+}
+.play-pause i {
+    cursor: pointer;
+}
+.icone-volume {
+    font-size: 28px;
+    margin-top: -5px;
+}
+.slide-volume {
+    line-height: 35px;
+}
+.controle-volume {
+  display: none;
+}
+.vagalume a{
+    color: #fff;
+    text-decoration: underline;
+}
+.ver-letra {
+  text-transform: uppercase;
+  text-decoration: underline;
+  color: #fff;
+  font-size: 1em;
+  font-weight: 400;
+  outline: none;
+  transition: .3s;
+}
+.ver-letra:active {
+  text-decoration: none;
+  color:#fff;
+}
+.ver-letra:visited {
+  text-decoration: none;
+  color: #fff;
+}
+.modal-content {
+  color: #fff !important;
+}
+/* Chrome */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -8px;
+}
+/* Firefox */
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  background: #fff;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #000000;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+/* IE e Edge */
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  border-width: 10px 0;
+  top: -10px;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #fff;
+  border: 0px solid #000101;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range]::-ms-fill-upper {
+  background: #fff;
+  border: 0px solid #000101;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border: 0px solid #000000;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+@media(min-width: 576px) {
+  .controle-volume {
+    display: flex;
+  }
+  .chamar-letra {
+    margin-top: 20px;
+  }
+}
+@media(min-width: 768px) {
+    .h1-logo {
+        text-align: center;
+    }
+    .logo {
+        display: block;
+        z-index: 2;
+    }
+    .logo img {
+        max-width: 200px;
+    }
+    .web-player {
+        height: auto;
+    }
+    .capa-album {
+        min-width: 320px;
+        height: 320px;
+    }
+    .logo img {
+        max-width: 300px;
+        margin: 65px 0;
+    }
+    .info-faixa-atual {
+        margin-top: 50px;
+        text-align: left;
+    }
+    .controle-volume {
+        margin-top: 10%;
+    }
+}
