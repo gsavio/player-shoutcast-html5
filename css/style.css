@@ -45,9 +45,8 @@ title {
     z-index: 3;
 }
 .capa-album {
-    max-width: 200px;
-    height: 200px;
-    margin: 10px auto;
+    max-width: 80%;
+    margin: 25px auto;
     background: url('../img/bg-capa.jpg') no-repeat;
     background-size: cover;
     border: 2px solid #fff;

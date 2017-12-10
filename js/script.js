@@ -22,7 +22,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// Ao utilizar, mudar para false para garantir que não haja falhas de requisição
+// Ao utilizar, mudar para false para evitar erros ao tentar buscar os dados de seu streaming
 const DEMO = true;
 
 // Nome da Rádio
@@ -30,6 +30,9 @@ const NOME_RADIO = "Rock FM";
 
 // Endereço do streaming Shoutcast com porta (se houver) e sem / no final. Exemplo: http://streaming.com:8080
 const URL_STREAMING = "http://104.156.244.180:8484";
+
+// Visite https://api.vagalume.com.br/docs/ para saber como conseguir uma chave para API de letras
+var API_KEY = "18fe07917957c289983464588aabddfb";
 
 window.onload = function() {
 	var pagina = new Pagina;
@@ -42,6 +45,9 @@ window.onload = function() {
     setInterval(function() {
         pegarDadosStreaming();
     }, 4000);
+
+    var capaAlbum = document.getElementsByClassName('capa-album')[0];
+    capaAlbum.style.height = capaAlbum.offsetWidth + 'px';
 }
 
 // Controle do DOM
@@ -130,10 +136,7 @@ function Pagina() {
     }
     // Atualiza a exibição da letra da música
 	this.atualizarLetra = function(musica, artista) {
-        // Visite https://api.vagalume.com.br/docs/ para saber como conseguir uma chave
-		var APIKey = '18fe07917957c289983464588aabddfb';
-
-		var xhttp = new XMLHttpRequest();
+var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
                 var retorno = JSON.parse(this.responseText);
@@ -157,12 +160,13 @@ function Pagina() {
                 }
 			}
 		}
-		xhttp.open('GET', 'https://api.vagalume.com.br/search.php?apikey=' + APIKey +'&art=' + artista + '&mus=' + musica, true);
+		xhttp.open('GET', 'https://api.vagalume.com.br/search.php?apikey=' + API_KEY +'&art=' + artista + '&mus=' + musica, true);
 		xhttp.send()
 	}
 }
 
 var audio = new Audio(URL_STREAMING + '/;');
+
 // Controle do áudio e player
 function Player() {
 	this.play = function() {

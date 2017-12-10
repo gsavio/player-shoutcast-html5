@@ -23,7 +23,7 @@ if(!empty($url)) {
   $array['artista'] = (empty($faixaAtual[1])) ? substr($faixaAtual[0], 0, -14) : $faixaAtual[0];
 
   header('Access-Control-Allow-Origin: *');
-  header('application/json', true);
+  header('Content-type: application/json', true);
 
   echo json_encode($array);
 }
