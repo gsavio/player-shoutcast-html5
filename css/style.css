@@ -46,7 +46,7 @@ title {
 }
 .capa-album {
     max-width: 80%;
-    margin: 25px auto;
+    margin: auto;
     background: url('../img/bg-capa.jpg') no-repeat;
     background-size: cover;
     border: 2px solid #fff;
@@ -225,6 +225,7 @@ input[type=range]::-ms-thumb {
         height: auto;
     }
     .capa-album {
+        margin: 10px auto;
         min-width: 320px;
         height: 320px;
     }
