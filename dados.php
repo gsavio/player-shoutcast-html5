@@ -19,8 +19,13 @@ if(!empty($url)) {
   // Separa artista de faixa
   $faixaAtual = explode('-', $retorno[6]);
   // Remover tags html da string
-  $array['faixa'] = (!empty($faixaAtual[1])) ? substr($faixaAtual[1], 0, -14) : '...';
-  $array['artista'] = (empty($faixaAtual[1])) ? substr($faixaAtual[0], 0, -14) : $faixaAtual[0];
+  if(count($faixaAtual) > 1) {
+    $array['faixa'] = (!empty($faixaAtual[1])) ? substr($faixaAtual[1], 0, -14) : '...';
+    $array['artista'] = (empty($faixaAtual[1])) ? substr($faixaAtual[0], 0, -14) : $faixaAtual[0];
+  } else {
+      $array['faixa'] = substr($retorno[6], 0, -14);
+      $array['artista'] = '...';
+  }
 
   header('Access-Control-Allow-Origin: *');
   header('Content-type: application/json', true);
