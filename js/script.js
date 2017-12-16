@@ -69,9 +69,7 @@ function Pagina() {
 
             artistaAtual.className = 'animated flipInY text-capitalize';
             artistaAtual.innerHTML = artista;
-
-            // Alterando o título da página com a música e artista atual
-            document.title = musica + ' - ' + artista + ' | ' + NOME_RADIO;
+            
             // Atualizar o título do modal com a letra da música
             document.getElementById('letraMusica').innerHTML = musica + ' - ' + artista; 
             // Removendo as classes de animação
@@ -130,13 +128,14 @@ function Pagina() {
     // Configura o volume se já tiver sido alterado antes
     this.setVolume = function() {
         if(typeof(Storage) !== 'undefined') {
-            document.getElementById('volume').value = localStorage.getItem('volume');
-            document.getElementById('indicadorVol').innerHTML = localStorage.getItem('volume');
+            var volumeLocalStorage = (localStorage.getItem('volume') === null) ? 80 : localStorage.getItem('volume');
+            document.getElementById('volume').value = volumeLocalStorage;
+            document.getElementById('indicadorVol').innerHTML = volumeLocalStorage;
         }
     }
     // Atualiza a exibição da letra da música
 	this.atualizarLetra = function(musica, artista) {
-var xhttp = new XMLHttpRequest();
+        var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function() {
 			if(this.readyState === 4 && this.status === 200) {
                 var retorno = JSON.parse(this.responseText);
@@ -172,15 +171,18 @@ function Player() {
 	this.play = function() {
         audio.play();
         
+        var volumePadrao = document.getElementById('volume').value;
+
         if(typeof(Storage) !== 'undefined') {
             if(localStorage.getItem('volume') !== null) {
                 audio.volume = intToDecimal(localStorage.getItem('volume'));
             } else {
-                audio.volume = intToDecimal(document.getElementById('volume').value);
+                audio.volume = intToDecimal(volumePadrao);
             }
         } else {
-            audio.volume = intToDecimal(document.getElementById('volume').value);
+            audio.volume = intToDecimal(volumePadrao);
         }
+        document.getElementById('indicadorVol').innerHTML = volumePadrao;
 
         audio.onabort = function() {
             audio.load();
@@ -208,6 +210,15 @@ audio.onpause = function() {
 
     if(botao.className === 'fa fa-pause') {
         botao.className = 'fa fa-play';
+    }
+}
+
+// Caso perca a conexão com o servidor do streaming, exibe este alerta
+audio.onerror = function() {
+    var confirmacao = confirm('Houve um problema ao tentar se conectar ao servidor. \nClique em OK para tentar novamente.');
+
+    if(confirmacao) {
+        window.location.reload();
     }
 }
 
@@ -239,13 +250,15 @@ function pegarDadosStreaming() {
 
             var pagina = new Pagina();
 
+            // Alterando o título da página com a música e artista atual
+            document.title = dados.faixa + ' - ' + dados.artista + ' | ' + NOME_RADIO; 
+
             // Substituindo caracteres de url para UTF-8
             var musicaAtual = dados.faixa.replace('&apos;', '\'');
             musicaAtual = musicaAtual.replace('&amp;', '&');
 
             var artistaAtual = dados.artista.replace('&apos;', '\'');
             artistaAtual = artistaAtual.replace('&amp;', '&');
-
 
             if(document.getElementById('faixaAtual').innerHTML !== musicaAtual) {
                 pagina.atualizarCapa(musicaAtual, artistaAtual);
