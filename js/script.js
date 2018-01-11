@@ -213,6 +213,13 @@ audio.onpause = function() {
     }
 }
 
+// Remove o mudo caso o volume seja alterado
+audio.onvolumechange = function() {
+    if(audio.volume > 0) {
+        audio.muted = false;
+    }    
+}
+
 // Caso perca a conexão com o servidor do streaming, exibe este alerta
 audio.onerror = function() {
     var confirmacao = confirm('Houve um problema ao tentar se conectar ao servidor. \nClique em OK para tentar novamente.');
@@ -226,7 +233,7 @@ audio.onerror = function() {
 document.getElementById('volume').oninput = function() {
     audio.volume = intToDecimal(this.value);
 
-    var pagina = new Pagina()
+    var pagina = new Pagina();
     pagina.alterarPorcentagemVolume(this.value);
 }
 
@@ -237,6 +244,24 @@ function togglePlay() {
     } else {
         audio.load();
         audio.play();
+    }
+}
+
+// Função para mutar e desmutar o player 
+function mutar() {
+    if(!audio.muted) {
+        // Seleciona direto o elemento para não alterar o volume salvo no localstorage
+        document.getElementById('indicadorVol').innerHTML = 0;
+        document.getElementById('volume').value = 0;
+        audio.volume = 0;
+        audio.muted = true;
+    } else {
+        var localVolume = localStorage.getItem('volume');
+        document.getElementById('indicadorVol').innerHTML = localVolume;
+        document.getElementById('volume').value = localVolume;
+        console.log(localVolume);
+        audio.volume = intToDecimal(localVolume);
+        audio.muted = false;
     }
 }
 
@@ -270,6 +295,127 @@ function pegarDadosStreaming() {
     xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING, true);
     xhttp.send();
 }
+
+// Controle do player por teclas 
+document.addEventListener('keydown', function(k) {
+    var k = k || window.event;
+    var tecla = k.keyCode || k.which;
+    var slideVolume = document.getElementById('volume');
+    
+    var pagina = new Pagina();
+
+    switch(tecla) {
+        case 32:
+            togglePlay();
+            break;
+        case 80:
+            togglePlay();
+            break;
+        case 77:
+            mutar();
+            break;
+        case 48:
+            audio.volume = 0;
+            slideVolume.value = 0;
+            pagina.alterarPorcentagemVolume(0);
+            break;
+        case 96:
+            audio.volume = 0;
+            slideVolume.value = 0;
+            pagina.alterarPorcentagemVolume(0);
+            break;
+        case 49:
+            audio.volume = 0.1;
+            slideVolume.value = 10;
+            pagina.alterarPorcentagemVolume(10);
+            break;
+        case 97:
+            audio.volume = 0.1;
+            slideVolume.value = 10;
+            pagina.alterarPorcentagemVolume(10);
+            break;
+        case 50:
+            audio.volume = 0.2;
+            slideVolume.value = 20;
+            pagina.alterarPorcentagemVolume(20);
+            break;
+        case 98:
+            audio.volume = 0.2;
+            slideVolume.value = 20;
+            pagina.alterarPorcentagemVolume(20);
+            break;
+        case 51:
+            audio.volume = 0.3;
+            slideVolume.value = 30;
+            pagina.alterarPorcentagemVolume(30);
+            break;
+        case 99:
+            audio.volume = 0.3;
+            slideVolume.value = 30;
+            pagina.alterarPorcentagemVolume(30);
+            break;
+        case 52:
+            audio.volume = 0.4;
+            slideVolume.value = 40;
+            pagina.alterarPorcentagemVolume(40);
+            break;
+        case 100:
+            audio.volume = 0.4;
+            slideVolume.value = 40;
+            pagina.alterarPorcentagemVolume(40);
+            break;
+        case 53:
+            audio.volume = 0.5;
+            slideVolume.value = 50;
+            pagina.alterarPorcentagemVolume(50);
+            break;
+        case 101:
+            audio.volume = 0.5;
+            slideVolume.value = 50;
+            pagina.alterarPorcentagemVolume(50);
+            break;
+        case 54:
+            audio.volume = 0.6;
+            slideVolume.value = 60;
+            pagina.alterarPorcentagemVolume(60);
+            break;
+        case 102:
+            audio.volume = 0.6;
+            slideVolume.value = 60;
+            pagina.alterarPorcentagemVolume(60);
+            break;
+        case 55:
+            audio.volume = 0.7;
+            slideVolume.value = 70;
+            pagina.alterarPorcentagemVolume(70);
+            break;
+        case 103:
+            audio.volume = 0.7;
+            slideVolume.value = 70;
+            pagina.alterarPorcentagemVolume(70);
+            break;
+        case 56:
+            audio.volume = 0.8;
+            slideVolume.value = 80;
+            pagina.alterarPorcentagemVolume(80);
+            break;
+        case 104:
+            audio.volume = 0.8;
+            slideVolume.value = 80;
+            pagina.alterarPorcentagemVolume(80);
+            break;
+        case 57:
+            audio.volume = 0.9;
+            slideVolume.value = 90;
+            pagina.alterarPorcentagemVolume(90);
+            break;
+        case 105:
+            audio.volume = 0.9;
+            slideVolume.value = 90;
+            pagina.alterarPorcentagemVolume(90);
+            break;
+    }
+});
 
 // Converter valor inteiro em decimal
 function intToDecimal(vol) {
