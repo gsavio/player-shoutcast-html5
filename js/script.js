@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Ao utilizar, mudar para false para evitar erros ao tentar buscar os dados de seu streaming
-const DEMO = true;
+const DEMO = false;
 
 // Nome da Rádio
 const NOME_RADIO = "Rock FM";
@@ -275,15 +275,15 @@ function pegarDadosStreaming() {
 
             var pagina = new Pagina();
 
-            // Alterando o título da página com a música e artista atual
-            document.title = dados.faixa + ' - ' + dados.artista + ' | ' + NOME_RADIO; 
-
             // Substituindo caracteres de url para UTF-8
             var musicaAtual = dados.faixa.replace('&apos;', '\'');
             musicaAtual = musicaAtual.replace('&amp;', '&');
 
             var artistaAtual = dados.artista.replace('&apos;', '\'');
             artistaAtual = artistaAtual.replace('&amp;', '&');
+
+            // Alterando o título da página com a música e artista atual
+            document.title = musicaAtual + ' - ' + artistaAtual + ' | ' + NOME_RADIO; 
 
             if(document.getElementById('faixaAtual').innerHTML !== musicaAtual) {
                 pagina.atualizarCapa(musicaAtual, artistaAtual);
