@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Ao utilizar, mudar para false para evitar erros ao tentar buscar os dados de seu streaming
-const DEMO = false;
+const DEMO = true;
 
 // Nome da Rádio
 const NOME_RADIO = "Rock FM";
