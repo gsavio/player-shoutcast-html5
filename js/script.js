@@ -184,10 +184,10 @@ function Player() {
         }
         document.getElementById('indicadorVol').innerHTML = volumePadrao;
 
-        audio.onabort = function() {
-            audio.load();
-            audio.play();
-        }
+        // audio.onabort = function() {
+        //     audio.load();
+        //     audio.play();
+        // }
 	};
 
 	this.pause = function() {
