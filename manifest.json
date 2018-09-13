@@ -1,0 +1,9 @@
+{
+    "name": "Player Web HTML5",
+    "short_name": "Rock FM",
+    "theme_color": "#171717",
+    "background_color": "#232323",
+    "display": "fullscreen",
+    "scope": "/",
+    "start_url": "/?utm_source=web_app_manifest"
+  }

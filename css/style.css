@@ -2,6 +2,10 @@
 @import url('https://fonts.googleapis.com/css?family=Share:400i,700i');
 @import url('bootstrap.min.css');
 
+body {
+    overflow-x: hidden;
+}
+
 title {
     text-transform: capitalize !important;
 }
@@ -32,11 +36,10 @@ title {
     min-width: 100%;
     min-height: 100%;
     position: absolute;
-    background: radial-gradient(transparent 20%, #000 85%);
+    background: radial-gradient(rgba(0,0,0,.5) 20%, #000 85%);
     z-index: 2;
 }
 .web-player {
-    margin-top: 10%;
     height: 100%;
     background: rgba(0,0,0,.5);
     color: #fff;
@@ -76,7 +79,7 @@ title {
     display: none;
 }
 .info-faixa-atual {
-    font-family: 'Share', cursive;
+    font-family: 'Share', sans-serif;
     text-align: center;
 }
 .info-faixa-atual h2 {
@@ -202,6 +205,46 @@ input[type=range]::-ms-thumb {
   background: #fff;
   cursor: pointer;
 }
+
+
+.historico h2 {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 10px 0;
+}
+
+.historico article {
+    margin: 5px 0;
+}
+
+.historico .capa-album-historico {
+    width: 95px;
+    height: 95px;
+    margin-right: 15px;
+    float: left;
+    background: url('../img/bg-capa.jpg') no-repeat;
+    background-size: cover;
+    border: 2px solid #fff;
+    box-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+    transition: background-image 1s;
+}
+
+.historico .info-musica {
+    color: #fff;
+    font-family: 'Share', sans-serif;
+}
+
+.historico .info-musica .nome-musica {
+    width: 100%;
+    font-weight: bold;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-bottom: -5px;
+}
+
 @media(min-width: 576px) {
   .controle-volume {
     display: flex;

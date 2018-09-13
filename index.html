@@ -1,107 +1,146 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="utf-8">
-        <title>Web Rádio</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="theme-color" content="#171717">
-        <meta property="og:url" content="http://gsavio.github.io/player-shoutcast-html5">
-        <meta property="og:title" content="Estou ouvindo a rádio Rock FM!">
-        <meta property="og:site_name" content="#SimplesmenteRock">
-        <meta property="og:description" content="">
-		<meta property="og:image" content="img/bg-capa.jpg">
-		<meta property="og:image:type" content="image/jpeg">
-		<meta property="og:image:width" content="512">
-		<meta property="og:image:height" content="512">
-        <link rel="stylesheet" href="css/font-awesome.min.css">
-        <link rel="stylesheet" type="text/css" href="css/animate.css">
-        <link rel="stylesheet" href="css/style.css">
-    </head>
-    <body>
-    	<div class="site-capa">
-	    	<div id="capaBg"></div>
-	    	<div class="mascara-bg"></div>
-	    </div>
-        <header>
-            <div class="container">
-                <div class="row">
-                    <div class="logo col-12">
-                        <h1 class="h1-logo"><a href="/"><img class="img-responsive" src="img/logo.png" /></a></h1>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <section id="player">
-            <div class="container">
-                <div class="row web-player">
-                    <div class="col-12 col-lg-10">
-                        <div class="row">
-                            <div class="col-12 col-md-5">
-                                <div class="capa-album">
-                                	<div id="capaAtual"></div>
-                                    <div class="marca-dagua"></div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-1"></div>
-                            <div class="col-12 ml-md-auto col-md-6">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="info-faixa-atual">
-                                            <h2 id="faixaAtual" class="faixa-atual text-uppercase">...</h2>
-                                            <h3 id="artistaAtual" class="artista-faixa text-captalize">...</h3>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row">
-                                        	<div class="play-pause col-12 col-md-2 text-center">
-                                        		<i id="botaoPlayer" class="fa fa-play" onclick="togglePlay()"></i>
-                                        	</div>
-                                        	<div class="col-12 col-md-10 text-center">
-                                        		<div class="row controle-volume ">
-	                                        		<div class="icone-volume col-1"><i class="fa fa-volume-up"></i></div>
-	                                        		<div class="slide-volume col-10 text-center"><input type="range" id="volume" step="1" min="0" max="100" value="80" ></div>
-	                                        		<div class="percentual-volume col-12">Volume <span id="indicadorVol">...</span>%</div>
-	                                        	</div>
-                                        	</div>
-                                            <div class="col-12 text-center chamar-letra">
-                                                <a href="#" class="ver-letra" data-target="#modalLetra">Ver Letra</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-2">
-                    	<div class="fixed-bottom">
-                            <!--<p class="text-center small text-bottom">
-                                Desenvolvido por <a href="https://github.com/guilherme-savio/" target="_blank">Guilherme Sávio</a> | Rádio <a href="http://www.antena1.com.br/" target="_blank">Antena 1</a>
-                            </p>-->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="modal fade" id="modalLetra" tabindex="-1" role="dialog" aria-labelledby="letraMusica" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content bg-dark">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="letraMusica">Modal title</h5>
-                        <button type="button" style="color: #fff" class="close" data-dismiss="modal" aria-label="Fechar">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="vagalume text-center"><a href="https://www.vagalume.com.br/" target="_blank" rel="noopener"><img src="img/103-fundo-escuro.jpg" class="" /></a><br />Powered by <a href="https://www.vagalume.com.br/" target="_blank" rel="noopener">Vagalume</a></div>
-                    <div class="modal-body" id="letra"></div>
-                  <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal">Fechar</button>
-                  </div>
+
+<head>
+    <meta charset="utf-8">
+    <title>Web Rádio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#171717">
+    <meta property="og:url" content="http://gsavio.github.io/player-shoutcast-html5">
+    <meta property="og:title" content="Estou ouvindo a rádio Rock FM!">
+    <meta property="og:site_name" content="#SimplesmenteRock">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="img/bg-capa.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="site-capa">
+        <div id="capaBg"></div>
+        <div class="mascara-bg"></div>
+    </div>
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="logo col-12">
+                    <h1 class="h1-logo"><a href="/"><img class="img-responsive" src="img/logo.png" /></a></h1>
                 </div>
             </div>
         </div>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-        <script type="text/javascript" src="js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="js/script.js"></script>
-    </body>
+    </header>
+    <section id="player">
+        <div class="container">
+            <div class="row web-player">
+                <div class="col-12 col-lg-10">
+                    <div class="row">
+                        <div class="col-12 col-md-5">
+                            <div class="capa-album">
+                                <div id="capaAtual"></div>
+                                <div class="marca-dagua"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-1"></div>
+                        <div class="col-12 ml-md-auto col-md-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="info-faixa-atual">
+                                        <h2 id="faixaAtual" class="faixa-atual text-uppercase">...</h2>
+                                        <h3 id="artistaAtual" class="artista-faixa text-captalize">...</h3>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="play-pause col-12 col-md-2 text-center">
+                                            <i id="botaoPlayer" class="fa fa-play" onclick="togglePlay()"></i>
+                                        </div>
+                                        <div class="col-12 col-md-10 text-center">
+                                            <div class="row controle-volume ">
+                                                <div class="icone-volume col-1"><i class="fa fa-volume-up"></i></div>
+                                                <div class="slide-volume col-10 text-center"><input type="range" id="volume"
+                                                        step="1" min="0" max="100" value="80"></div>
+                                                <div class="percentual-volume col-12">Volume <span id="indicadorVol">...</span>%</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 text-center chamar-letra">
+                                            <a href="#" class="ver-letra" data-target="#modalLetra">Ver Letra</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <div class="fixed-bottom">
+                        <!--<p class="text-center small text-bottom">
+                                Desenvolvido por <a href="https://github.com/guilherme-savio/" target="_blank">Guilherme Sávio</a> | Rádio <a href="http://www.antena1.com.br/" target="_blank">Antena 1</a>
+                            </p>-->
+                    </div>
+                </div>
+            </div>
+            <div class="row historico">
+                <div class="col-12 col-md-4" id="proximaMusica">
+                    <h2>Próxima</h2>
+                    <article>
+                        <div class="capa-album-historico"></div>
+                        <div class="info-musica">
+                            <div class="nome-musica">...</div>
+                            <div class="nome-artista">...</div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="col-12 col-md-8">
+                    <h2>Tocadas recentemente</h2>
+                    <div class="row" id="historicoMusicas">
+                        <article class="col-12 col-md-6">
+                            <div class="capa-album-historico capa-historico-1"></div>
+                            <div class="info-musica">
+                                <div class="nome-musica">...</div>
+                                <div class="nome-artista">...</div>
+                            </div>
+                        </article>
+                        <article class="col-12 col-md-6">
+                            <div class="capa-album-historico capa-historico-2"></div>
+                            <div class="info-musica">
+                                <div class="nome-musica">...</div>
+                                <div class="nome-artista">...</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="modalLetra" tabindex="-1" role="dialog" aria-labelledby="letraMusica" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="letraMusica">Modal title</h5>
+                    <button type="button" style="color: #fff" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="vagalume text-center"><a href="https://www.vagalume.com.br/" target="_blank" rel="noopener"><img
+                            src="img/103-fundo-escuro.jpg" class="" /></a><br />Powered by <a href="https://www.vagalume.com.br/"
+                        target="_blank" rel="noopener">Vagalume</a></div>
+                <div class="modal-body" id="letra"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+</body>
+
 </html>
