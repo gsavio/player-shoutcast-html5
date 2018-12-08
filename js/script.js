@@ -23,13 +23,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Ao utilizar, mudar para false para evitar erros ao tentar buscar os dados de seu streaming
-const DEMO = false;
+const DEMO = true;
 
 // Nome da Rádio
-const NOME_RADIO = "Rock FM";
+const NOME_RADIO = "Kiss FM";
 
 // Endereço do streaming Shoutcast com porta (se houver) e sem / no final. Exemplo: http://streaming.com:8080
-const URL_STREAMING = "http://stm3.xcast.com.br:6804";
+const URL_STREAMING = "http://cloud2.cdnseguro.com:23538";
 
 // Visite https://api.vagalume.com.br/docs/ para saber como conseguir uma chave para API de letras
 const API_KEY = "18fe07917957c289983464588aabddfb";
@@ -52,8 +52,10 @@ window.onload = function () {
     setInterval(function () {
         pegarDadosStreaming();
     }, 4000);
-
-    document.getElementsByClassName('capa-album')[0].style.height = capaAlbum.offsetWidth + 'px';
+    
+    var capaAlbum = document.getElementsByClassName('capa-album')[0];
+    
+    capaAlbum.style.height = capaAlbum.offsetWidth + 'px';
 }
 
 // Controle do DOM
@@ -87,49 +89,6 @@ function Pagina() {
         }
     }
 
-    this.atualizarHistorico = function () {
-        // Pega as informações atuais
-        var faixaAtual = document.getElementById('faixaAtual').innerText;
-        var artistaAtual = document.getElementById('artistaAtual').innerText;
-        var capaAtual = document.getElementById('capaAtual').getAttribute('style');
-
-        // Simplificando os seletores
-        let $nomeMusica = document.querySelectorAll('#historicoMusicas article .info-musica .nome-musica');
-        let $nomeArtista = document.querySelectorAll('#historicoMusicas article .info-musica .nome-artista');
-        let $capaAlbum = document.querySelectorAll('#historicoMusicas article .capa-album-historico');
-
-        // Pegar as primeiras informações do histórico
-        var ultimaMusica = $nomeMusica[0].innerText;
-        var ultimoArtista = $nomeArtista[0].innerText;
-        var ultimaCapa = $capaAlbum[0].getAttribute('style');
-
-        // Passa as informações do primeiro para o segundo bloco do histórico de músicas
-        $nomeMusica[1].innerHTML = ultimaMusica;
-        $nomeArtista[1].innerHTML = ultimoArtista;
-        $capaAlbum[1].setAttribute('style', ultimaCapa);
-
-        // Passa as informações atuais para o primeiro bloco do histórico de músicas
-        $nomeMusica[0].innerHTML = faixaAtual;
-        $nomeArtista[0].innerHTML = artistaAtual;
-        $capaAlbum[0].setAttribute('style', capaAtual);
-
-        // Faz animação das caixas com informações
-        for (var i = 0; i < 2; i++) {
-            var $blocoHistorico = document.querySelectorAll('#historicoMusicas article')[i].classList;
-            $blocoHistorico.add('animated');
-            $blocoHistorico.add('flipInX');
-
-            // Atrasa a remoção da classe em 1 segundo para evitar que cancele a animação
-            setTimeout(function () {
-                for (var j = 0; j < 2; j++) {
-                    $blocosHistorico = document.querySelectorAll('#historicoMusicas article')[j].classList;
-                    $blocosHistorico.remove('animated');
-                    $blocosHistorico.remove('flipInX');
-                }
-            }, 1000);
-        }
-    }
-
     this.atualizarHistorico = function (info, n) {
         // Seletores dos blocos do histórico
         var $blocoHistorico = document.querySelectorAll('#historicoMusicas article');
@@ -149,22 +108,21 @@ function Pagina() {
 
                 // Se retornar algum dado, alterar a resolução da imagem ou definir a padrão
                 document.querySelectorAll('#historicoMusicas article .capa-album-historico')[n].style.backgroundImage = 'url(' + artworkUrl100 + ')';
-
-                // Converte caracteres especiais para utf8
-                var musica = info.faixa.replace('&apos;', '\'');
-                var musicaHist = musica.replace('&amp;', '&');
-
-                var artista = info.artista.replace('&apos;', '\'');
-                var artistaHist = artista.replace('&amp;', '&');
-
-                // Insere os dados
-                $nomeMusica[n].innerHTML = musicaHist;
-                $nomeArtista[n].innerHTML = artistaHist;
-
-                // Insere a classe de animação no bloco
-                $blocoHistorico[n].classList.add('animated');
-                $blocoHistorico[n].classList.add('slideInRight');
             }
+            // Converte caracteres especiais para utf8
+            var musica = info.faixa.replace(/&apos;/g, '\'');
+            var musicaHist = musica.replace(/&amp;/g, '&');
+
+            var artista = info.artista.replace(/&apos;/g, '\'');
+            var artistaHist = artista.replace(/&amp;/g, '&');
+
+            // Insere os dados
+            $nomeMusica[n].innerHTML = musicaHist;
+            $nomeArtista[n].innerHTML = artistaHist;
+
+            // Insere a classe de animação no bloco
+            $blocoHistorico[n].classList.add('animated');
+            $blocoHistorico[n].classList.add('slideInRight');
         }
         xhttp.open('GET', 'https://itunes.apple.com/search?term=' + info.artista + ' ' + info.faixa + '&media=music&limit=1', true);
         xhttp.send();
@@ -180,8 +138,8 @@ function Pagina() {
     // Atualizar o bloco de próxima música
     this.atualizarProximaMusica = function (musica, artista = '') {
         // Converte caracteres especiais
-        let strMusica = musica.replace('&apos;', '\'');
-        let proxMusica = strMusica.replace('&amp;', '&');
+        let strMusica = musica.replace(/&apos;/g, '\'');
+        let proxMusica = strMusica.replace(/&amp;/g, '&');
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -192,28 +150,28 @@ function Pagina() {
                 var capaAlbum = (dados.resultCount) ? dados.results[0].artworkUrl100 : 'img/bg-capa.jpg';
 
                 // Converte o nome do artista para utf8
-                let strArtista = (artista) ? artista.replace('&apos;', '\'') : dados.results[0].artistName.replace('&apos;', '\'');
-                let proxArtista = strArtista.replace('&amp;', '&');
+                strArtista = (artista) ? artista.replace(/&apos;/g, '\'') : dados.results[0].artistName.replace(/&apos;/g, '\'');
+                proxArtista = strArtista.replace(/&amp;/g, '&');
 
                 // Altera capa de album
                 document.querySelector('#proximaMusica article .capa-album-historico').style.backgroundImage = 'url(' + capaAlbum + ')';
-
-                // Altera as informaçoes do bloco
-                document.querySelector('#proximaMusica article .info-musica .nome-musica').innerHTML = musica;
-                document.querySelector('#proximaMusica article .info-musica .nome-artista').innerHTML = proxArtista;
-
-                // Seletor do bloco da proxima musica
-                $proxMusica =  document.querySelector('#proximaMusica article');
-                
-                // Adiciona classes de animação
-                $proxMusica.classList.add('animated');
-                $proxMusica.classList.add('slideInLeft');
-
-                setTimeout(function() {
-                    $proxMusica.classList.remove('animated');
-                    $proxMusica.classList.remove('slideInLeft');
-                }, 2000);
             }
+
+            // Altera as informaçoes do bloco
+            document.querySelector('#proximaMusica article .info-musica .nome-musica').innerHTML = musica;
+            document.querySelector('#proximaMusica article .info-musica .nome-artista').innerHTML = proxArtista;
+
+            // Seletor do bloco da proxima musica
+            $proxMusica =  document.querySelector('#proximaMusica article');
+            
+            // Adiciona classes de animação
+            $proxMusica.classList.add('animated');
+            $proxMusica.classList.add('slideInLeft');
+
+            setTimeout(function() {
+                $proxMusica.classList.remove('animated');
+                $proxMusica.classList.remove('slideInLeft');
+            }, 2000);
         }
         xhttp.open('GET', 'https://itunes.apple.com/search?term=' + artista + ' ' + proxMusica + '&media=music&limit=1', true);
         xhttp.send();
@@ -451,7 +409,7 @@ function mutar() {
 // Busca os dados de transmissão do streaming
 function pegarDadosStreaming() {
     var xhttp = new XMLHttpRequest();
-    var urlRequest = (!DEMO) ? 'dados.php' : 'https://web-radio-demo.000webhostapp.com/dados.php';
+    var urlRequest = (!DEMO) ? 'dados.php' : 'https://server.hbmil.xyz/dados.php';
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             var dados = JSON.parse(this.responseText);
@@ -459,11 +417,11 @@ function pegarDadosStreaming() {
             var pagina = new Pagina();
 
             // Substituindo caracteres de url para UTF-8
-            let musica = dados.faixa.replace('&apos;', '\'');
-            musicaAtual = musica.replace('&amp;', '&');
+            let musica = dados.faixa.replace(/&apos;/g, '\'');
+            musicaAtual = musica.replace(/&amp;/g, '&');
 
-            let artista = dados.artista.replace('&apos;', '\'');
-            artistaAtual = artista.replace('&amp;', '&');
+            let artista = dados.artista.replace(/&apos;/g, '\'');
+            artistaAtual = artista.replace(/&amp;/g, '&');
 
             // Alterando o título da página com a música e artista atual
             document.title = musicaAtual + ' - ' + artistaAtual + ' | ' + NOME_RADIO;

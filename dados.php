@@ -122,7 +122,7 @@ if(!empty($url)) {
 
 			$array['artista'] = (empty($faixaAtual[1])) ? trim(substr($musicaAtual, 0, -14)) : $artista;
 		} elseif(count($faixaAtual) < 2) {
-			$array['faixa'] = (!empty($musicaAtual)) ? trim(substr($musicaAtual, 0, -14)) : '...';
+			$array['faixa'] = (empty($musicaAtual) || $musicaAtual === '</body></html>') ? '...' : trim(substr($musicaAtual, 0, -14));
 			$array['artista'] = '...';
 		} else {
 			$array['faixa'] = trim($faixaAtual[1]);
