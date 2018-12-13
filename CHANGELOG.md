@@ -1,12 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## v1.0.0 (2018-12-12)
 
-## 2018-01-11
-### Added 
-- Controle do player por teclas como: volume, play e pause e mudo
+## Added 
+- Volume control with up and down arrow keys
+- Two box with the last couple songs played with cover art
+
+## Changed 
+- Demo logo
+- Transitions effects
+
+## [Unreleased]
 
 ## 2018-09-13
 ### Added 
-- Adição da opção de buscar histórico de músicas tocadas e próxima música na API de busca
+- Historic of played musics and next song on the API
+
+## 2018-01-11
+### Added 
+- Player control by key: volume, play, pause and mute

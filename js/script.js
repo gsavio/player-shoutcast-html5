@@ -26,10 +26,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 const DEMO = true;
 
 // Nome da Rádio
-const NOME_RADIO = "Kiss FM";
+const NOME_RADIO = "Rock FM";
 
 // Endereço do streaming Shoutcast com porta (se houver) e sem / no final. Exemplo: http://streaming.com:8080
-const URL_STREAMING = "http://cloud2.cdnseguro.com:23538";
+const URL_STREAMING = "http://104.156.244.180:8484";
 
 // Visite https://api.vagalume.com.br/docs/ para saber como conseguir uma chave para API de letras
 const API_KEY = "18fe07917957c289983464588aabddfb";
@@ -52,9 +52,9 @@ window.onload = function () {
     setInterval(function () {
         pegarDadosStreaming();
     }, 4000);
-    
+
     var capaAlbum = document.getElementsByClassName('capa-album')[0];
-    
+
     capaAlbum.style.height = capaAlbum.offsetWidth + 'px';
 }
 
@@ -135,50 +135,8 @@ function Pagina() {
         }, 2000);
     }
 
-    // Atualizar o bloco de próxima música
-    this.atualizarProximaMusica = function (musica, artista = '') {
-        // Converte caracteres especiais
-        let strMusica = musica.replace(/&apos;/g, '\'');
-        let proxMusica = strMusica.replace(/&amp;/g, '&');
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                var dados = JSON.parse(this.responseText);
-
-                // Verifica se há resultados
-                var capaAlbum = (dados.resultCount) ? dados.results[0].artworkUrl100 : 'img/bg-capa.jpg';
-
-                // Converte o nome do artista para utf8
-                strArtista = (artista) ? artista.replace(/&apos;/g, '\'') : dados.results[0].artistName.replace(/&apos;/g, '\'');
-                proxArtista = strArtista.replace(/&amp;/g, '&');
-
-                // Altera capa de album
-                document.querySelector('#proximaMusica article .capa-album-historico').style.backgroundImage = 'url(' + capaAlbum + ')';
-            }
-
-            // Altera as informaçoes do bloco
-            document.querySelector('#proximaMusica article .info-musica .nome-musica').innerHTML = musica;
-            document.querySelector('#proximaMusica article .info-musica .nome-artista').innerHTML = proxArtista;
-
-            // Seletor do bloco da proxima musica
-            $proxMusica =  document.querySelector('#proximaMusica article');
-            
-            // Adiciona classes de animação
-            $proxMusica.classList.add('animated');
-            $proxMusica.classList.add('slideInLeft');
-
-            setTimeout(function() {
-                $proxMusica.classList.remove('animated');
-                $proxMusica.classList.remove('slideInLeft');
-            }, 2000);
-        }
-        xhttp.open('GET', 'https://itunes.apple.com/search?term=' + artista + ' ' + proxMusica + '&media=music&limit=1', true);
-        xhttp.send();
-    }
-
     // Atualizar a imagem de capa do Player e do Background
-    this.atualizarCapa = function (musica, artista) {
+    this.atualizarCapa = function (musica = '', artista) {
         // Imagem padrão caso não encontre nenhuma na API do iTunes
         var urlCapa = 'img/bg-capa.jpg';
 
@@ -267,7 +225,7 @@ function Pagina() {
     // Configura o volume se já tiver sido alterado antes
     this.setVolume = function () {
         if (typeof (Storage) !== 'undefined') {
-            var volumeLocalStorage = (localStorage.getItem('volume') === null) ? 80 : localStorage.getItem('volume');
+            var volumeLocalStorage = (!localStorage.getItem('volume')) ? 80 : localStorage.getItem('volume');
             document.getElementById('volume').value = volumeLocalStorage;
             document.getElementById('indicadorVol').innerHTML = volumeLocalStorage;
         }
@@ -325,11 +283,6 @@ function Player() {
             audio.volume = intToDecimal(volumePadrao);
         }
         document.getElementById('indicadorVol').innerHTML = volumePadrao;
-
-        // audio.onabort = function() {
-        //     audio.load();
-        //     audio.play();
-        // }
     };
 
     this.pause = function () {
@@ -389,6 +342,24 @@ function togglePlay() {
     }
 }
 
+function aumentarVolume() {
+    var nivelVolume = audio.volume;
+    if(audio) {
+        if(audio.volume >= 0 && audio.volume < 1) {
+            audio.volume = (nivelVolume + .01).toFixed(2);
+        }
+    }
+}
+
+function abaixarVolume() {
+    var nivelVolume = audio.volume;
+    if(audio) {
+        if(audio.volume >= 0.01 && audio.volume <= 1) {
+            audio.volume = (nivelVolume - .01).toFixed(2);
+        }
+    }
+}
+
 // Função para mutar e desmutar o player 
 function mutar() {
     if (!audio.muted) {
@@ -430,7 +401,6 @@ function pegarDadosStreaming() {
                 pagina.atualizarCapa(musicaAtual, artistaAtual);
                 pagina.atualizarFaixaAtual(musicaAtual, artistaAtual);
                 pagina.atualizarLetra(musicaAtual, artistaAtual);
-                pagina.atualizarProximaMusica(dados.proximaMusica.faixa, dados.proximaMusica.artista);
                 for (var i = 0; i < 2; i++) {
                     pagina.atualizarHistorico(dados.historicoMusicas[i], i);
                 }
@@ -442,7 +412,7 @@ function pegarDadosStreaming() {
     var d = new Date();
 
     // Requisição com timestamp para impedir cache em aparelhos móveis
-    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&prox=' + PROX_MUSICA + '&historico=' + HISTORICO + '&t=' + d.getTime(), true);
+    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historico=' + HISTORICO + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
@@ -450,12 +420,25 @@ function pegarDadosStreaming() {
 document.addEventListener('keydown', function (k) {
     var k = k || window.event;
     var tecla = k.keyCode || k.which;
+
     var slideVolume = document.getElementById('volume');
 
     var pagina = new Pagina();
 
     switch (tecla) {
-        // Barra de espaço
+        // Tecla seta para cima
+        case 38:
+            aumentarVolume();
+            slideVolume.value = decimalToInt(audio.volume);
+            pagina.alterarPorcentagemVolume(decimalToInt(audio.volume));
+            break;
+            // Seta apra baixo
+        case 40:
+            abaixarVolume();
+            slideVolume.value = decimalToInt(audio.volume);
+            pagina.alterarPorcentagemVolume(decimalToInt(audio.volume));
+            break;
+            // Barra de espaço
         case 32:
             togglePlay();
             break;
@@ -602,6 +585,24 @@ function intToDecimal(vol) {
         }
     } else if (vol === '100') {
         volume = 1;
+    }
+
+    return volume;
+}
+
+// Converter decimal para valor inteiro
+function decimalToInt(vol) {
+    var volStr = vol.toString();
+    var tamanhoStr = volStr.length;
+
+    if(tamanhoStr > 3) {
+        volume = volStr.substr(2);
+    } else if(tamanhoStr === 3) {
+        volume = volStr.substr(2) + '0';
+    } else if(volStr === '1') {
+        volume = volStr + '00';
+    } else {
+        volume = volStr;
     }
 
     return volume;
