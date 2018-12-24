@@ -22,9 +22,9 @@
 </head>
 
 <body>
-    <div class="site-capa">
-        <div id="capaBg"></div>
-        <div class="mascara-bg"></div>
+    <div class="cover-site">
+        <div id="bgCover"></div>
+        <div class="bg-mask"></div>
     </div>
     <main>
         <section id="player">
@@ -33,34 +33,34 @@
                     <div class="col-12 col-lg-10">
                         <div class="row">
                             <div class="col-12 col-md-5">
-                                <div class="capa-album">
-                                    <div id="capaAtual"></div>
-                                    <div class="marca-dagua"></div>
+                                <div class="cover-album">
+                                    <div id="currentCoverArt"></div>
+                                    <div class="watermark"></div>
                                 </div>
                             </div>
                             <div class="col-12 ml-md-auto col-md-6">
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="info-faixa-atual">
-                                            <h2 id="faixaAtual" class="faixa-atual text-uppercase">...</h2>
-                                            <h3 id="artistaAtual" class="artista-faixa text-captalize">...</h3>
+                                        <div class="info-current-song">
+                                            <h2 id="currentSong" class="current-song text-uppercase">...</h2>
+                                            <h3 id="currentArtist" class="current-artist text-captalize">...</h3>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="row">
                                             <div class="play-pause col-12 col-md-2 text-center">
-                                                <i id="botaoPlayer" class="fa fa-play" onclick="togglePlay()"></i>
+                                                <i id="playerButton" class="fa fa-play" onclick="togglePlay()"></i>
                                             </div>
                                             <div class="col-12 col-md-10 text-center">
-                                                <div class="row controle-volume ">
-                                                    <div class="icone-volume col-1"><i class="fa fa-volume-up"></i></div>
-                                                    <div class="slide-volume col-10 text-center"><input type="range" id="volume"
+                                                <div class="row volume-control">
+                                                    <div class="volume-icon col-1"><i class="fa fa-volume-up"></i></div>
+                                                    <div class="volume-slide col-10 text-center"><input type="range" id="volume"
                                                             step="1" min="0" max="100" value="80"></div>
-                                                    <div class="percentual-volume col-12">Volume <span id="indicadorVol">...</span>%</div>
+                                                    <div class="percentual-volume col-12">Volume <span id="volIndicator">...</span>%</div>
                                                 </div>
                                             </div>
-                                            <div class="col-12 text-center chamar-letra">
-                                                <a href="#" class="ver-letra" data-target="#modalLetra">Ver Letra</a>
+                                            <div class="col-12 text-center call-lyrics">
+                                                <a href="#" class="lyrics" data-target="#modalLyrics">Lyrics</a>
                                             </div>
                                         </div>
                                     </div>
@@ -68,30 +68,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-lg-2">
-                        <div class="fixed-bottom">
-                            <!--<p class="text-center small text-bottom">
-                                    Desenvolvido por <a href="https://github.com/guilherme-savio/" target="_blank">Guilherme Sávio</a> | Rádio <a href="http://www.antena1.com.br/" target="_blank">Antena 1</a>
-                                </p>-->
-                        </div>
-                    </div>
                 </div>
-                <div class="row historico">
+                <div class="row historic">
                     <div class="col-12">
-                        <h2>Tocadas recentemente</h2>
-                        <div class="row" id="historicoMusicas">
+                        <h2>Recently Played</h2>
+                        <div class="row" id="historicSong">
                             <article class="col-12 col-md-6">
-                                <div class="capa-album-historico capa-historico-1"></div>
-                                <div class="info-musica">
-                                    <div class="nome-musica">...</div>
-                                    <div class="nome-artista">...</div>
+                                <div class="cover-historic capa-historico-1"></div>
+                                <div class="music-info">
+                                    <div class="song">...</div>
+                                    <div class="artist">...</div>
                                 </div>
                             </article>
                             <article class="col-12 col-md-6">
-                                <div class="capa-album-historico capa-historico-2"></div>
-                                <div class="info-musica">
-                                    <div class="nome-musica">...</div>
-                                    <div class="nome-artista">...</div>
+                                <div class="cover-historic capa-historico-2"></div>
+                                <div class="music-info">
+                                    <div class="song">...</div>
+                                    <div class="artist">...</div>
                                 </div>
                             </article>
                         </div>
@@ -100,11 +93,11 @@
             </div>
         </section>
     </main>
-    <div class="modal fade" id="modalLetra" tabindex="-1" role="dialog" aria-labelledby="letraMusica" aria-hidden="true">
+    <div class="modal fade" id="modalLyrics" tabindex="-1" role="dialog" aria-labelledby="lyricsSong" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="letraMusica">Letra</h5>
+                    <h5 class="modal-title" id="lyricsSong">Letra</h5>
                     <button type="button" style="color: #fff" class="close" data-dismiss="modal" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -114,7 +107,7 @@
                         target="_blank" rel="noopener">Vagalume</a></div>
                 <div class="modal-body" id="letra"></div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

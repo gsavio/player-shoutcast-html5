@@ -22,185 +22,171 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// Ao utilizar, mudar para false para evitar erros ao tentar buscar os dados de seu streaming
+// Set to false to prevent errors 
 const DEMO = true;
 
-// Nome da Rádio
-const NOME_RADIO = "Rock FM";
+const RADIO_NAME = "Kiss FM";
 
-// Endereço do streaming Shoutcast com porta (se houver) e sem / no final. Exemplo: http://streaming.com:8080
-const URL_STREAMING = "http://104.156.244.180:8484";
+// URL of SHOUTCast streaming without / on the final, eg: http://streaming.com:8080
+const URL_STREAMING = "http://cloud2.cdnseguro.com:23538";
 
-// Visite https://api.vagalume.com.br/docs/ para saber como conseguir uma chave para API de letras
+// Visit https://api.vagalume.com.br/docs/ yo get your API key
 const API_KEY = "18fe07917957c289983464588aabddfb";
 
-// Caso queira pegar a lista das últimas músicas tocadas exibidas pelo Shoutcast, mude o valor para true ou 1
+// Set to true to get the last songs played
 const HISTORICO = true;
 
-// Caso queira receber a informação da próxima música a ser tocada pelo Auto DJ, mude este valor para true ou 1 (Necessário o servidor estar exibindo esta informação)
-// Para verificar acesse o endereço do seu streaming e porta /nextsong, exemplo http://streaming.com:8080/nextsong
-const PROX_MUSICA = true;
-
 window.onload = function () {
-    var pagina = new Pagina;
-    pagina.alterarTitle();
-    pagina.setVolume();
+    var page = new Page;
+    page.changeTitlePage();
+    page.setVolume();
 
     var player = new Player();
     player.play();
 
+    // Interval to get streaming data in miliseconds
     setInterval(function () {
-        pegarDadosStreaming();
+        getStreamingData();
     }, 4000);
 
-    var capaAlbum = document.getElementsByClassName('capa-album')[0];
+    var coverArt = document.getElementsByClassName('cover-album')[0];
 
-    capaAlbum.style.height = capaAlbum.offsetWidth + 'px';
+    coverArt.style.height = coverArt.offsetWidth + 'px';
 }
 
-// Controle do DOM
-function Pagina() {
-    // Alterar o título da página para o nome da rádio
-    this.alterarTitle = function (titulo = NOME_RADIO) {
-        document.title = titulo;
+// DOM control
+function Page() {
+    this.changeTitlePage = function (title = RADIO_NAME) {
+        document.title = title;
     };
 
-    // Atualizar faixa atual
-    this.atualizarFaixaAtual = function (musica, artista) {
-        var faixaAtual = document.getElementById('faixaAtual');
-        var artistaAtual = document.getElementById('artistaAtual');
+    this.refreshCurrentSong = function (song, artist) {
+        var currentSong = document.getElementById('currentSong');
+        var currentArtist = document.getElementById('currentArtist');
 
-        if (musica !== faixaAtual.innerHTML) {
-            // Caso a faixa seja diferente da atual, atualizar e inserir a classe com animação em css
-            faixaAtual.className = 'animated flipInY text-uppercase';
-            faixaAtual.innerHTML = musica;
+        if (song !== currentSong.innerHTML) {
+            // Animate transition
+            currentSong.className = 'animated flipInY text-uppercase';
+            currentSong.innerHTML = song;
 
-            artistaAtual.className = 'animated flipInY text-capitalize';
-            artistaAtual.innerHTML = artista;
+            currentArtist.className = 'animated flipInY text-capitalize';
+            currentArtist.innerHTML = artist;
 
-            // Atualizar o título do modal com a letra da música
-            document.getElementById('letraMusica').innerHTML = musica + ' - ' + artista;
+            // Refresh modal title
+            document.getElementById('lyricsSong').innerHTML = song + ' - ' + artist;
 
-            // Remove as classes de animação
+            // Remove animation classes
             setTimeout(function () {
-                faixaAtual.className = 'text-uppercase';
-                artistaAtual.className = 'text-capitalize';
+                currentSong.className = 'text-uppercase';
+                currentArtist.className = 'text-capitalize';
             }, 2000);
         }
     }
 
-    this.atualizarHistorico = function (info, n) {
-        // Seletores dos blocos do histórico
-        var $blocoHistorico = document.querySelectorAll('#historicoMusicas article');
-        var $nomeMusica = document.querySelectorAll('#historicoMusicas article .info-musica .nome-musica');
-        var $nomeArtista = document.querySelectorAll('#historicoMusicas article .info-musica .nome-artista');
+    this.refreshHistoric = function (info, n) {
+        var $historicDiv = document.querySelectorAll('#historicSong article');
+        var $songName = document.querySelectorAll('#historicSong article .music-info .song');
+        var $artistName = document.querySelectorAll('#historicSong article .music-info .artist');
 
-        // Capa padrão
-        var urlCapa = 'img/bg-capa.jpg';
+        // Default cover art
+        var urlCoverArt = 'img/bg-capa.jpg';
 
-        // Busca as imagens de capa para as músicas do histórico
+        // Get cover art for song history
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
-            // Buscar imagem da capa na API do iTunes
             if (this.readyState === 4 && this.status === 200) {
-                var dados = JSON.parse(this.responseText);
-                var artworkUrl100 = (dados.resultCount) ? dados.results[0].artworkUrl100 : urlCapa;
+                var data = JSON.parse(this.responseText);
+                var artworkUrl100 = (data.resultCount) ? data.results[0].artworkUrl100 : urlCoverArt;
 
-                // Se retornar algum dado, alterar a resolução da imagem ou definir a padrão
-                document.querySelectorAll('#historicoMusicas article .capa-album-historico')[n].style.backgroundImage = 'url(' + artworkUrl100 + ')';
+                document.querySelectorAll('#historicSong article .cover-historic')[n].style.backgroundImage = 'url(' + artworkUrl100 + ')';
             }
-            // Converte caracteres especiais para utf8
-            var musica = info.faixa.replace(/&apos;/g, '\'');
-            var musicaHist = musica.replace(/&amp;/g, '&');
+            // Formating characters to UTF-8
+            var music = info.song.replace(/&apos;/g, '\'');
+            var songHist = music.replace(/&amp;/g, '&');
 
-            var artista = info.artista.replace(/&apos;/g, '\'');
-            var artistaHist = artista.replace(/&amp;/g, '&');
+            var artist = info.artist.replace(/&apos;/g, '\'');
+            var artistHist = artist.replace(/&amp;/g, '&');
 
-            // Insere os dados
-            $nomeMusica[n].innerHTML = musicaHist;
-            $nomeArtista[n].innerHTML = artistaHist;
+            $songName[n].innerHTML = songHist;
+            $artistName[n].innerHTML = artistHist;
 
-            // Insere a classe de animação no bloco
-            $blocoHistorico[n].classList.add('animated');
-            $blocoHistorico[n].classList.add('slideInRight');
+            // Add class for animation
+            $historicDiv[n].classList.add('animated');
+            $historicDiv[n].classList.add('slideInRight');
         }
-        xhttp.open('GET', 'https://itunes.apple.com/search?term=' + info.artista + ' ' + info.faixa + '&media=music&limit=1', true);
+        xhttp.open('GET', 'https://itunes.apple.com/search?term=' + info.artist + ' ' + info.song + '&media=music&limit=1', true);
         xhttp.send();
 
         setTimeout(function () {
             for (var j = 0; j < 2; j++) {
-                $blocoHistorico[j].classList.remove('animated');
-                $blocoHistorico[j].classList.remove('slideInRight');
+                $historicDiv[j].classList.remove('animated');
+                $historicDiv[j].classList.remove('slideInRight');
             }
         }, 2000);
     }
 
-    // Atualizar a imagem de capa do Player e do Background
-    this.atualizarCapa = function (musica = '', artista) {
-        // Imagem padrão caso não encontre nenhuma na API do iTunes
-        var urlCapa = 'img/bg-capa.jpg';
+    this.refreshCover = function (song = '', artist) {
+        // Default cover art
+        var urlCoverArt = 'img/bg-capa.jpg';
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
-            // Seletores de onde alterar a imagem de capa do album
-            var capaMusica = document.getElementById('capaAtual');
-            var capaBackground = document.getElementById('capaBg');
+            var coverArt = document.getElementById('currentCoverArt');
+            var coverBackground = document.getElementById('bgCover');
 
-            // Buscar imagem da capa na API do iTunes
+            // Get cover art URL on iTunes API
             if (this.readyState === 4 && this.status === 200) {
-                var dados = JSON.parse(this.responseText);
-                var artworkUrl100 = (dados.resultCount) ? dados.results[0].artworkUrl100 : urlCapa;
+                var data = JSON.parse(this.responseText);
+                var artworkUrl100 = (data.resultCount) ? data.results[0].artworkUrl100 : urlCoverArt;
 
                 // Se retornar algum dado, alterar a resolução da imagem ou definir a padrão
-                urlCapa = (artworkUrl100 != urlCapa) ? artworkUrl100.replace('100x100bb', '512x512bb') : urlCapa;
-                var urlCapa96 = (artworkUrl100 != urlCapa) ? urlCapa.replace('512x512bb', '96x96bb') : urlCapa;
-                var urlCapa128 = (artworkUrl100 != urlCapa) ? urlCapa.replace('512x512bb', '128x128bb') : urlCapa;
-                var urlCapa192 = (artworkUrl100 != urlCapa) ? urlCapa.replace('512x512bb', '192x192bb') : urlCapa;
-                var urlCapa256 = (artworkUrl100 != urlCapa) ? urlCapa.replace('512x512bb', '256x256bb') : urlCapa;
-                var urlCapa384 = (artworkUrl100 != urlCapa) ? urlCapa.replace('512x512bb', '384x384bb') : urlCapa;
+                urlCoverArt = (artworkUrl100 != urlCoverArt) ? artworkUrl100.replace('100x100bb', '512x512bb') : urlCoverArt;
+                var urlCoverArt96 = (artworkUrl100 != urlCoverArt) ? urlCoverArt.replace('512x512bb', '96x96bb') : urlCoverArt;
+                var urlCoverArt128 = (artworkUrl100 != urlCoverArt) ? urlCoverArt.replace('512x512bb', '128x128bb') : urlCoverArt;
+                var urlCoverArt192 = (artworkUrl100 != urlCoverArt) ? urlCoverArt.replace('512x512bb', '192x192bb') : urlCoverArt;
+                var urlCoverArt256 = (artworkUrl100 != urlCoverArt) ? urlCoverArt.replace('512x512bb', '256x256bb') : urlCoverArt;
+                var urlCoverArt384 = (artworkUrl100 != urlCoverArt) ? urlCoverArt.replace('512x512bb', '384x384bb') : urlCoverArt;
 
-                // Imagem do player
-                capaMusica.style.backgroundImage = 'url(' + urlCapa + ')';
-                capaMusica.className = 'animated bounceInLeft';
+                coverArt.style.backgroundImage = 'url(' + urlCoverArt + ')';
+                coverArt.className = 'animated bounceInLeft';
 
-                // Imagem do background da página
-                capaBackground.style.backgroundImage = 'url(' + urlCapa + ')';
+                coverBackground.style.backgroundImage = 'url(' + urlCoverArt + ')';
 
                 setTimeout(function () {
-                    capaMusica.className = '';
+                    coverArt.className = '';
                 }, 2000);
 
                 if ('mediaSession' in navigator) {
                     navigator.mediaSession.metadata = new MediaMetadata({
-                        title: musica,
-                        artist: artista,
+                        title: song,
+                        artist: artist,
                         artwork: [{
-                                src: urlCapa96,
+                                src: urlCoverArt96,
                                 sizes: '96x96',
                                 type: 'image/png'
                             },
                             {
-                                src: urlCapa128,
+                                src: urlCoverArt128,
                                 sizes: '128x128',
                                 type: 'image/png'
                             },
                             {
-                                src: urlCapa192,
+                                src: urlCoverArt192,
                                 sizes: '192x192',
                                 type: 'image/png'
                             },
                             {
-                                src: urlCapa256,
+                                src: urlCoverArt256,
                                 sizes: '256x256',
                                 type: 'image/png'
                             },
                             {
-                                src: urlCapa384,
+                                src: urlCoverArt384,
                                 sizes: '384x384',
                                 type: 'image/png'
                             },
                             {
-                                src: urlCapa,
+                                src: urlCoverArt,
                                 sizes: '512x512',
                                 type: 'image/png'
                             }
@@ -209,80 +195,78 @@ function Pagina() {
                 }
             }
         }
-        xhttp.open('GET', 'https://itunes.apple.com/search?term=' + artista + ' ' + musica + '&media=music&limit=1', true);
+        xhttp.open('GET', 'https://itunes.apple.com/search?term=' + artist + ' ' + song + '&media=music&limit=1', true);
         xhttp.send();
     }
 
-    // Altera o percentual do indicador de volume
-    this.alterarPorcentagemVolume = function (volume) {
-        document.getElementById('indicadorVol').innerHTML = volume;
+    this.changeVolumeIndicator = function (volume) {
+        document.getElementById('volIndicator').innerHTML = volume;
 
         if (typeof (Storage) !== 'undefined') {
             localStorage.setItem('volume', volume);
         }
     }
 
-    // Configura o volume se já tiver sido alterado antes
     this.setVolume = function () {
         if (typeof (Storage) !== 'undefined') {
             var volumeLocalStorage = (!localStorage.getItem('volume')) ? 80 : localStorage.getItem('volume');
             document.getElementById('volume').value = volumeLocalStorage;
-            document.getElementById('indicadorVol').innerHTML = volumeLocalStorage;
+            document.getElementById('volIndicator').innerHTML = volumeLocalStorage;
         }
     }
-    // Atualiza a exibição da letra da música
-    this.atualizarLetra = function (musica, artista) {
+
+    this.refreshLyric = function (currentSong, currentArtist) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
-                var retorno = JSON.parse(this.responseText);
+                var data = JSON.parse(this.responseText);
 
-                var botaoVerLetra = document.getElementsByClassName('ver-letra')[0];
+                var openLyric = document.getElementsByClassName('lyrics')[0];
 
-                if (retorno.type === 'exact' || retorno.type === 'aprox') {
-                    var letra = retorno.mus[0].text;
+                if (data.type === 'exact' || data.type === 'aprox') {
+                    var lyric = data.mus[0].text;
 
-                    document.getElementById('letra').innerHTML = letra.replace(/\n/g, '<br />');
-                    botaoVerLetra.style.opacity = "1";
-                    botaoVerLetra.setAttribute('data-toggle', 'modal');
+                    document.getElementById('letra').innerHTML = lyric.replace(/\n/g, '<br />');
+                    openLyric.style.opacity = "1";
+                    openLyric.setAttribute('data-toggle', 'modal');
                 } else {
-                    botaoVerLetra.style.opacity = "0.3";
-                    botaoVerLetra.removeAttribute('data-toggle');
+                    openLyric.style.opacity = "0.3";
+                    openLyric.removeAttribute('data-toggle');
 
-                    var modalLetra = document.getElementById('modalLetra');
-                    modalLetra.style.display = "none";
-                    modalLetra.setAttribute('aria-hidden', 'true');
+                    var modalLyric = document.getElementById('modalLetra');
+                    modalLyric.style.display = "none";
+                    modalLyric.setAttribute('aria-hidden', 'true');
                     (document.getElementsByClassName('modal-backdrop')[0]) ? document.getElementsByClassName('modal-backdrop')[0].remove(): '';
                 }
             } else {
-                document.getElementsByClassName('ver-letra')[0].style.opacity = "0.3";
-                document.getElementsByClassName('ver-letra')[0].removeAttribute('data-toggle');
+                document.getElementsByClassName('lyrics')[0].style.opacity = "0.3";
+                document.getElementsByClassName('lyrics')[0].removeAttribute('data-toggle');
             }
         }
-        xhttp.open('GET', 'https://api.vagalume.com.br/search.php?apikey=' + API_KEY + '&art=' + artista + '&mus=' + musica.toLowerCase(), true);
+        xhttp.open('GET', 'https://api.vagalume.com.br/search.php?apikey=' + API_KEY + '&art=' + currentArtist + '&mus=' + currentSong.toLowerCase(), true);
         xhttp.send()
     }
 }
 
 var audio = new Audio(URL_STREAMING + '/;');
 
-// Controle do áudio e player
+// Player control
 function Player() {
     this.play = function () {
         audio.play();
 
-        var volumePadrao = document.getElementById('volume').value;
+        var defaultVolume = document.getElementById('volume').value;
 
         if (typeof (Storage) !== 'undefined') {
             if (localStorage.getItem('volume') !== null) {
                 audio.volume = intToDecimal(localStorage.getItem('volume'));
             } else {
-                audio.volume = intToDecimal(volumePadrao);
+                audio.volume = intToDecimal(defaultVolume);
             }
         } else {
-            audio.volume = intToDecimal(volumePadrao);
+            audio.volume = intToDecimal(defaultVolume);
         }
-        document.getElementById('indicadorVol').innerHTML = volumePadrao;
+        document.getElementById('volIndicator').innerHTML = defaultVolume;
     };
 
     this.pause = function () {
@@ -290,49 +274,46 @@ function Player() {
     };
 }
 
-// Ao audio ser parado, muda o botão de play para pause
+// On play, change the button to pause
 audio.onplay = function () {
-    var botao = document.getElementById('botaoPlayer');
+    var botao = document.getElementById('playerButton');
 
     if (botao.className === 'fa fa-play') {
         botao.className = 'fa fa-pause';
     }
 }
 
-// Ao audio ser parado, muda o botão de pause para play
+// On play, change the button to play
 audio.onpause = function () {
-    var botao = document.getElementById('botaoPlayer');
+    var botao = document.getElementById('playerButton');
 
     if (botao.className === 'fa fa-pause') {
         botao.className = 'fa fa-play';
     }
 }
 
-// Remove o mudo caso o volume seja alterado
+// Unmute when volume changed
 audio.onvolumechange = function () {
     if (audio.volume > 0) {
         audio.muted = false;
     }
 }
 
-// Caso perca a conexão com o servidor do streaming, exibe este alerta
 audio.onerror = function () {
-    var confirmacao = confirm('Houve um problema ao tentar se conectar ao servidor. \nClique em OK para tentar novamente.');
+    var confirmacao = confirm('Error on communicate to server. \nClick OK to try again.');
 
     if (confirmacao) {
         window.location.reload();
     }
 }
 
-// Ao deslizar a barra de volume, muda o volume do áudio e do indicador
 document.getElementById('volume').oninput = function () {
     audio.volume = intToDecimal(this.value);
 
-    var pagina = new Pagina();
-    pagina.alterarPorcentagemVolume(this.value);
+    var page = new Page();
+    page.changeVolumeIndicator(this.value);
 }
 
-// Função de play e pause do player
 function togglePlay() {
     if (!audio.paused) {
         audio.pause();
@@ -342,243 +323,239 @@ function togglePlay() {
     }
 }
 
-function aumentarVolume() {
-    var nivelVolume = audio.volume;
+function volumeUp() {
+    var vol = audio.volume;
     if(audio) {
         if(audio.volume >= 0 && audio.volume < 1) {
-            audio.volume = (nivelVolume + .01).toFixed(2);
+            audio.volume = (vol + .01).toFixed(2);
         }
     }
 }
 
-function abaixarVolume() {
-    var nivelVolume = audio.volume;
+function volumeDown() {
+    var vol = audio.volume;
     if(audio) {
         if(audio.volume >= 0.01 && audio.volume <= 1) {
-            audio.volume = (nivelVolume - .01).toFixed(2);
+            audio.volume = (vol - .01).toFixed(2);
         }
     }
 }
 
-// Função para mutar e desmutar o player 
-function mutar() {
+function mute() {
     if (!audio.muted) {
-        // Seleciona direto o elemento para não alterar o volume salvo no localstorage
-        document.getElementById('indicadorVol').innerHTML = 0;
+        document.getElementById('volIndicator').innerHTML = 0;
         document.getElementById('volume').value = 0;
         audio.volume = 0;
         audio.muted = true;
     } else {
         var localVolume = localStorage.getItem('volume');
-        document.getElementById('indicadorVol').innerHTML = localVolume;
+        document.getElementById('volIndicator').innerHTML = localVolume;
         document.getElementById('volume').value = localVolume;
         audio.volume = intToDecimal(localVolume);
         audio.muted = false;
     }
 }
 
-// Busca os dados de transmissão do streaming
-function pegarDadosStreaming() {
+function getStreamingData() {
     var xhttp = new XMLHttpRequest();
-    var urlRequest = (!DEMO) ? 'dados.php' : 'https://server.hbmil.xyz/dados.php';
+    var urlRequest = (!DEMO) ? 'api.php' : 'https://server.hbmil.xyz/api.php';
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            var dados = JSON.parse(this.responseText);
+            var data = JSON.parse(this.responseText);
 
-            var pagina = new Pagina();
+            var page = new Page();
 
-            // Substituindo caracteres de url para UTF-8
-            let musica = dados.faixa.replace(/&apos;/g, '\'');
-            musicaAtual = musica.replace(/&amp;/g, '&');
+            // Formating characters to UTF-8
+            let song = data.currentSong.replace(/&apos;/g, '\'');
+            currentSong = song.replace(/&amp;/g, '&');
 
-            let artista = dados.artista.replace(/&apos;/g, '\'');
-            artistaAtual = artista.replace(/&amp;/g, '&');
+            let artist = data.currentArtist.replace(/&apos;/g, '\'');
+            currentArtist = artist.replace(/&amp;/g, '&');
 
-            // Alterando o título da página com a música e artista atual
-            document.title = musicaAtual + ' - ' + artistaAtual + ' | ' + NOME_RADIO;
+            // Change the title
+            document.title = currentSong + ' - ' + currentArtist + ' | ' + RADIO_NAME;
 
-            if (document.getElementById('faixaAtual').innerHTML !== musica) {
-                pagina.atualizarCapa(musicaAtual, artistaAtual);
-                pagina.atualizarFaixaAtual(musicaAtual, artistaAtual);
-                pagina.atualizarLetra(musicaAtual, artistaAtual);
+            if (document.getElementById('currentSong').innerHTML !== song) {
+                page.refreshCover(currentSong, currentArtist);
+                page.refreshCurrentSong(currentSong, currentArtist);
+                page.refreshLyric(currentSong, currentArtist);
+
                 for (var i = 0; i < 2; i++) {
-                    pagina.atualizarHistorico(dados.historicoMusicas[i], i);
+                    page.refreshHistoric(data.songHistory[i], i);
                 }
             }
         }
     };
 
-    // Gera timestamp atual
     var d = new Date();
 
-    // Requisição com timestamp para impedir cache em aparelhos móveis
-    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historico=' + HISTORICO + '&t=' + d.getTime(), true);
+    // Requisition with timestamp to prevent cache on mobile devices
+    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historic=' + HISTORICO + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
-// Controle do player por teclas 
+// Player control by keys
 document.addEventListener('keydown', function (k) {
     var k = k || window.event;
-    var tecla = k.keyCode || k.which;
-
+    var key = k.keyCode || k.which;
+    
     var slideVolume = document.getElementById('volume');
 
-    var pagina = new Pagina();
+    var page = new Page();
 
-    switch (tecla) {
-        // Tecla seta para cima
+    switch (key) {
+        // Arrow up
         case 38:
-            aumentarVolume();
+            volumeUp();
             slideVolume.value = decimalToInt(audio.volume);
-            pagina.alterarPorcentagemVolume(decimalToInt(audio.volume));
+            page.changeVolumeIndicator(decimalToInt(audio.volume));
             break;
-            // Seta apra baixo
+        // Arrow down
         case 40:
-            abaixarVolume();
+            volumeDown();
             slideVolume.value = decimalToInt(audio.volume);
-            pagina.alterarPorcentagemVolume(decimalToInt(audio.volume));
+            page.changeVolumeIndicator(decimalToInt(audio.volume));
             break;
-            // Barra de espaço
+        // Spacebar
         case 32:
             togglePlay();
             break;
-            // Tecla P
+        // P
         case 80:
             togglePlay();
             break;
-            // Tecla M
+        // M
         case 77:
-            mutar();
+            mute();
             break;
-            // Tecla 0
+        // 0
         case 48:
             audio.volume = 0;
             slideVolume.value = 0;
-            pagina.alterarPorcentagemVolume(0);
+            page.changeVolumeIndicator(0);
             break;
-            // Tecla 0 do teclado numérico
+        // 0 numeric keyboard
         case 96:
             audio.volume = 0;
             slideVolume.value = 0;
-            pagina.alterarPorcentagemVolume(0);
+            page.changeVolumeIndicator(0);
             break;
-            // Tecla 1
+        // 1
         case 49:
             audio.volume = .1;
             slideVolume.value = 10;
-            pagina.alterarPorcentagemVolume(10);
+            page.changeVolumeIndicator(10);
             break;
-            // Tecla 1 do teclado numérico
+        // 1 numeric key
         case 97:
             audio.volume = .1;
             slideVolume.value = 10;
-            pagina.alterarPorcentagemVolume(10);
+            page.changeVolumeIndicator(10);
             break;
-            // Tecla 2
+        // 2
         case 50:
             audio.volume = .2;
             slideVolume.value = 20;
-            pagina.alterarPorcentagemVolume(20);
+            page.changeVolumeIndicator(20);
             break;
-            // Tecla 2 do teclado numérico
+        // 2 numeric key
         case 98:
             audio.volume = .2;
             slideVolume.value = 20;
-            pagina.alterarPorcentagemVolume(20);
+            page.changeVolumeIndicator(20);
             break;
-            // Tecla 3
+        // 3
         case 51:
             audio.volume = .3;
             slideVolume.value = 30;
-            pagina.alterarPorcentagemVolume(30);
+            page.changeVolumeIndicator(30);
             break;
-            // Tecla 3 do teclado numérico
+        // 3 numeric key
         case 99:
             audio.volume = .3;
             slideVolume.value = 30;
-            pagina.alterarPorcentagemVolume(30);
+            page.changeVolumeIndicator(30);
             break;
-            // Tecla 4
+        // 4
         case 52:
             audio.volume = .4;
             slideVolume.value = 40;
-            pagina.alterarPorcentagemVolume(40);
+            page.changeVolumeIndicator(40);
             break;
-            // Tecla 4 do teclado numérico
+        // 4 numeric key
         case 100:
             audio.volume = .4;
             slideVolume.value = 40;
-            pagina.alterarPorcentagemVolume(40);
+            page.changeVolumeIndicator(40);
             break;
-            // Tecla 5
+        // 5
         case 53:
             audio.volume = .5;
             slideVolume.value = 50;
-            pagina.alterarPorcentagemVolume(50);
+            page.changeVolumeIndicator(50);
             break;
-            // Tecla 5 do teclado numérico
+        // 5 numeric key
         case 101:
             audio.volume = .5;
             slideVolume.value = 50;
-            pagina.alterarPorcentagemVolume(50);
+            page.changeVolumeIndicator(50);
             break;
-            // Tecla 6 
+        // 6 
         case 54:
             audio.volume = .6;
             slideVolume.value = 60;
-            pagina.alterarPorcentagemVolume(60);
+            page.changeVolumeIndicator(60);
             break;
-            // Tecla 6 do teclado numérico
+        // 6 numeric key
         case 102:
             audio.volume = .6;
             slideVolume.value = 60;
-            pagina.alterarPorcentagemVolume(60);
+            page.changeVolumeIndicator(60);
             break;
-            // Tecla 7
+        // 7
         case 55:
             audio.volume = .7;
             slideVolume.value = 70;
-            pagina.alterarPorcentagemVolume(70);
+            page.changeVolumeIndicator(70);
             break;
-            // Tecla 7 do teclado numérico
+        // 7 numeric key
         case 103:
             audio.volume = .7;
             slideVolume.value = 70;
-            pagina.alterarPorcentagemVolume(70);
+            page.changeVolumeIndicator(70);
             break;
-            // Tecla 8
+        // 8
         case 56:
             audio.volume = .8;
             slideVolume.value = 80;
-            pagina.alterarPorcentagemVolume(80);
+            page.changeVolumeIndicator(80);
             break;
-            // Tecla 8 do teclado númerico
+        // 8 numeric key
         case 104:
             audio.volume = .8;
             slideVolume.value = 80;
-            pagina.alterarPorcentagemVolume(80);
+            page.changeVolumeIndicator(80);
             break;
-            // Tecla 9
+        // 9
         case 57:
             audio.volume = .9;
             slideVolume.value = 90;
-            pagina.alterarPorcentagemVolume(90);
+            page.changeVolumeIndicator(90);
             break;
-            // Tecla 9 do teclado número
+        // 9 numeric key
         case 105:
             audio.volume = .9;
             slideVolume.value = 90;
-            pagina.alterarPorcentagemVolume(90);
+            page.changeVolumeIndicator(90);
             break;
     }
 });
 
-// Converter valor inteiro em decimal
 function intToDecimal(vol) {
-    var tamanhoStr = vol.length;
+    var sizeStr = vol.length;
 
-    if (tamanhoStr > 0 && tamanhoStr < 3) {
-        if (tamanhoStr === 1) {
+    if (sizeStr > 0 && sizeStr < 3) {
+        if (sizeStr === 1) {
             volume = '0.0' + vol;
         } else {
             volume = '0.' + vol;
@@ -590,14 +567,13 @@ function intToDecimal(vol) {
     return volume;
 }
 
-// Converter decimal para valor inteiro
 function decimalToInt(vol) {
     var volStr = vol.toString();
-    var tamanhoStr = volStr.length;
+    var sizeStr = volStr.length;
 
-    if(tamanhoStr > 3) {
+    if(sizeStr > 3) {
         volume = volStr.substr(2);
-    } else if(tamanhoStr === 3) {
+    } else if(sizeStr === 3) {
         volume = volStr.substr(2) + '0';
     } else if(volStr === '1') {
         volume = volStr + '00';

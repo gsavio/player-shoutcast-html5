@@ -1,36 +1,29 @@
-# Player Shoutcast HTML5
+# Player SHOUTCast HTML5
+Responsive web player with lyrics for SHOUTCast streaming. 
+
+![Responsive Web Player](https://i.imgur.com/x2NP8K8.png)
 
 ## Required:
 - PHP >= 5.3
+- cURL
 
-## Instalation
+## Installation
 - Just put the files in your server
-- **Set your Shoutcast streaming URL in the file *script.js* in the *js* folder**
+- **Configure your player in the file *script.js* in the *js* folder**
+    - Set the constant **DEMO** to false
+    - Set the name of your web radio
+    - Set your streaming URL (without `/` in the end)
+    - Set your API key of Vagalume ([See how to get your API key](https://api.vagalume.com.br/docs/))
 
-### HTML5 Player for Shoutcast streamings with info like:
+### HTML5 Player for SHOUTCast streamings with info like:
 - Current song
-- Historic of played songs (Not tested in Shoutcast V1)
-- Cover art of the current song ([API iTunes](https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/))
-- Lyrics of the current song ([API Vagalume](https://api.vagalume.com.br/docs/))
+- Historic of played songs (Not tested in SHOUTCast V1)
+- Cover art of the current song ([iTunes API](https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/))
+- Lyrics of the current song ([Vagalume API](https://api.vagalume.com.br/docs/))
 - Responsive design
 
-## *[PT-BR]*
-
-## Necessário:
-- PHP 5.3 ou superior (Para poder pegar dados do servidor do streaming)
-
-## Instalação
-- Basta colocar os arquivos em um servidor com PHP
-- **Configure o seu streaming no arquivo *script.js* na pasta *js***
-
-### Player para streaming Shoutcast V1 e V2 com informações como:
-- Música atual
-- Histórico de músicas tocadas (Shoutcast V1 ainda não testado)
-- Capa do álbum da música ([API iTunes](https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/))
-- Letra da música ([API Vagalume](https://api.vagalume.com.br/docs/))
-- Design responsivo
-
-### Opcional
-- Próxima música a ser tocada pelo Auto DJ  (Necessário que seu streaming exiba esta informação)
-
-O player foi desenvolvido utilizando o framework Bootstrap e é ajustável em qualquer tamanho de tela.
+## Keyboard Controls 
+- `M` - mute/unmute
+- `P` and `space` - play/pause
+- `arrow up` and `arrow down` - increase/decrease volume
+- `0 to 9` - volume percent
