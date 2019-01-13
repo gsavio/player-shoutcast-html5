@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2017 Guilherme Sávio
+Copyright (c) 2017-2019 Guilherme Sávio
 Github: https://github.com/gsavio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -25,16 +25,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Set to false to prevent errors 
 const DEMO = true;
 
-const RADIO_NAME = "Kiss FM";
+const RADIO_NAME = "Rock FM";
 
 // URL of SHOUTCast streaming without / on the final, eg: http://streaming.com:8080
-const URL_STREAMING = "http://cloud2.cdnseguro.com:23538";
+const URL_STREAMING = "http://104.156.244.180:8484";
 
 // Visit https://api.vagalume.com.br/docs/ yo get your API key
 const API_KEY = "18fe07917957c289983464588aabddfb";
 
 // Set to true to get the last songs played
-const HISTORICO = true;
+const HISTORIC = true;
 
 window.onload = function () {
     var page = new Page;
@@ -390,7 +390,7 @@ function getStreamingData() {
     var d = new Date();
 
     // Requisition with timestamp to prevent cache on mobile devices
-    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historic=' + HISTORICO + '&t=' + d.getTime(), true);
+    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
