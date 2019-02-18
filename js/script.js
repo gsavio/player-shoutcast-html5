@@ -44,6 +44,7 @@ window.onload = function () {
     var player = new Player();
     player.play();
 
+    getStreamingData();
     // Interval to get streaming data in miliseconds
     setInterval(function () {
         getStreamingData();
