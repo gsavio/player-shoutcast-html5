@@ -361,6 +361,8 @@ function getStreamingData() {
     var xhttp = new XMLHttpRequest();
     var urlRequest = (!DEMO) ? 'api.php' : 'https://server.hbmil.xyz/api.php';
     xhttp.onreadystatechange = function () {
+        console.log(this.status)
+
         if (this.readyState === 4 && this.status === 200) {
             var data = JSON.parse(this.responseText);
 
@@ -385,6 +387,13 @@ function getStreamingData() {
                     page.refreshHistoric(data.songHistory[i], i);
                 }
             }
+        } else if(!this.status) {
+            console.error(
+                '%cAn error has ocurred when trying to get streaming data. \n %cMake sure you changed the constant DEMO to %cfalse',
+                'color: red; font-weight: bold; font-size: 20px; text-align: center',
+                'font-size: 14px;',
+                'font-size: 14px; font-weight: bold;'
+                );
         }
     };
 
