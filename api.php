@@ -129,7 +129,10 @@ if(!empty($url)) {
 } else {
 	$array = ['error' => 'URL parameter not found'];
 }
-header('Access-Control-Allow-Origin: *');
+
+$urlHost = $_SERVER['HTTP_HOST'];
+
+header('Access-Control-Allow-Origin: '.$urlHost);
 header('Content-type: application/json', true);
 
 echo json_encode($array);

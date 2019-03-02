@@ -22,18 +22,15 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// Set to false to prevent errors 
-const DEMO = false;
-
 const RADIO_NAME = "Rock FM";
 
 // URL of SHOUTCast streaming without / on the final, eg: http://streaming.com:8080
 const URL_STREAMING = "http://104.156.244.180:8484";
 
-// Visit https://api.vagalume.com.br/docs/ yo get your API key
+// Visit https://api.vagalume.com.br/docs/ to get your API key
 const API_KEY = "18fe07917957c289983464588aabddfb";
 
-// Set to true to get the last songs played
+// Set HISTORIC to true to get the last songs played
 const HISTORIC = true;
 
 window.onload = function () {
@@ -227,14 +224,14 @@ function Page() {
                 if (data.type === 'exact' || data.type === 'aprox') {
                     var lyric = data.mus[0].text;
 
-                    document.getElementById('letra').innerHTML = lyric.replace(/\n/g, '<br />');
+                    document.getElementById('lyric').innerHTML = lyric.replace(/\n/g, '<br />');
                     openLyric.style.opacity = "1";
                     openLyric.setAttribute('data-toggle', 'modal');
                 } else {
                     openLyric.style.opacity = "0.3";
                     openLyric.removeAttribute('data-toggle');
 
-                    var modalLyric = document.getElementById('modalLetra');
+                    var modalLyric = document.getElementById('modalLyrics');
                     modalLyric.style.display = "none";
                     modalLyric.setAttribute('aria-hidden', 'true');
                     (document.getElementsByClassName('modal-backdrop')[0]) ? document.getElementsByClassName('modal-backdrop')[0].remove(): '';
@@ -284,7 +281,7 @@ audio.onplay = function () {
     }
 }
 
-// On play, change the button to play
+// On pause, change the button to play
 audio.onpause = function () {
     var botao = document.getElementById('playerButton');
 
@@ -359,10 +356,14 @@ function mute() {
 
 function getStreamingData() {
     var xhttp = new XMLHttpRequest();
-    var urlRequest = (!DEMO) ? 'api.php' : 'https://server.hbmil.xyz/api.php';
     xhttp.onreadystatechange = function () {
 
         if (this.readyState === 4 && this.status === 200) {
+
+            if(this.response.length === 0) {
+                console.log('%cdebug', 'font-size: 22px')
+            }
+
             var data = JSON.parse(this.responseText);
 
             var page = new Page();
@@ -392,7 +393,7 @@ function getStreamingData() {
     var d = new Date();
 
     // Requisition with timestamp to prevent cache on mobile devices
-    xhttp.open('GET', urlRequest + '?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
+    xhttp.open('GET', 'api.php?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
@@ -554,34 +555,9 @@ document.addEventListener('keydown', function (k) {
 });
 
 function intToDecimal(vol) {
-    var sizeStr = vol.length;
-
-    if (sizeStr > 0 && sizeStr < 3) {
-        if (sizeStr === 1) {
-            volume = '0.0' + vol;
-        } else {
-            volume = '0.' + vol;
-        }
-    } else if (vol === '100') {
-        volume = 1;
-    }
-
-    return volume;
+    return vol / 100;
 }
 
 function decimalToInt(vol) {
-    var volStr = vol.toString();
-    var sizeStr = volStr.length;
-
-    if(sizeStr > 3) {
-        volume = volStr.substr(2);
-    } else if(sizeStr === 3) {
-        volume = volStr.substr(2) + '0';
-    } else if(volStr === '1') {
-        volume = volStr + '00';
-    } else {
-        volume = volStr;
-    }
-
-    return volume;
+    return vol * 100;
 }
