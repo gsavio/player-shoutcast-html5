@@ -10,7 +10,6 @@ Responsive web player with lyrics for SHOUTCast streaming.
 ## Installation
 - Just put the files in your server
 - **Configure your player in the file *script.js* in the *js* folder**
-    - Set the constant **DEMO** to false
     - Set the name of your web radio
     - Set your streaming URL (without `/` in the end)
     - Set your API key of Vagalume ([See how to get your API key](https://api.vagalume.com.br/docs/))
