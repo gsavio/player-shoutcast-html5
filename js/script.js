@@ -23,7 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 // Set to false to prevent errors 
-const DEMO = true;
+const DEMO = false;
 
 const RADIO_NAME = "Rock FM";
 
