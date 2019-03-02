@@ -22,7 +22,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// Set to false to prevent errors 
+// Set this constant to false to prevent errors 
 const DEMO = true;
 
 const RADIO_NAME = "Rock FM";
