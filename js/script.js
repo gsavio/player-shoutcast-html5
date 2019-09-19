@@ -388,7 +388,7 @@ function getStreamingData() {
     var d = new Date();
 
     // Requisition with timestamp to prevent cache on mobile devices
-    xhttp.open('GET', 'https://server.hbmil.xyz/api.php?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
+    xhttp.open('GET', 'https://demo.jatedisse.com.br/api.php?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
