@@ -27,6 +27,10 @@ const RADIO_NAME = "Rock FM";
 // URL of SHOUTCast streaming without / on the final, eg: http://streaming.com:8080
 const URL_STREAMING = "http://104.156.244.180:8484";
 
+// Software type of your streaming server: icecast and shoutcast are both supported.
+// When choosing icecast, make sure the file 'player.log' in the document root is writeable.
+const STREAMING_TYPE = "shoutcast";
+
 // Visit https://api.vagalume.com.br/docs/ to get your API key
 const API_KEY = "18fe07917957c289983464588aabddfb";
 
@@ -246,7 +250,7 @@ function Page() {
     }
 }
 
-var audio = new Audio(URL_STREAMING + '/;');
+var audio = new Audio(URL_STREAMING);
 
 // Player control
 function Player() {
@@ -393,7 +397,7 @@ function getStreamingData() {
     var d = new Date();
 
     // Requisition with timestamp to prevent cache on mobile devices
-    xhttp.open('GET', 'api.php?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
+    xhttp.open('GET', 'api.php?url=' + URL_STREAMING + '&streamtype=' + STREAMING_TYPE + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
