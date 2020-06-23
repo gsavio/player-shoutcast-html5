@@ -13,7 +13,7 @@ $historic = filter_input(INPUT_GET, 'historic', FILTER_VALIDATE_BOOLEAN);
 $streamingType = filter_input(INPUT_GET, 'streamtype', FILTER_SANITIZE_STRING);
 
 if(!empty($url)) {
-	if($streamingType == 'shoutcast'){
+	if($streamingType === 'shoutcast') {
 		if($historic) {
 			$urls[] = $url . '/7.html';
 			$urls[] = $url . '/played';
@@ -130,23 +130,32 @@ if(!empty($url)) {
 		} else {
 			$array = ['error' => 'Failed to fetch data'];
 		}
-	} else if ($streamingType == 'icecast'){
+	} else if ($streamingType === 'icecast'){
 		$url_explode = explode("/", $url);
 		array_pop($url_explode);
 		$url = implode("/", $url_explode);
 		$url = $url."/status-json.xsl";
 
-		$curl = curl_init($url);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0');
+		// if cURL don't works, use file_get_contents
+		// $curl = curl_init($url);
+		// curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		// curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0');
 			
-		$data = curl_exec($curl);
-		curl_close($curl);
-		
+		// $data = curl_exec($curl);
+		// curl_close($curl);
+
+		$data = file_get_contents($url);
+
 		if(!empty($data)) {
 
 			$ice_stats = json_decode($data, true);
-			$ice_stats_source = $ice_stats["icestats"]["source"];
+
+			if(is_array($ice_stats["icestats"]["source"])) {
+				$ice_stats_source = $ice_stats["icestats"]["source"][0];
+			} else {
+				$ice_stats_source = $ice_stats["icestats"]["source"];
+			}
+			
 			$array['listenersPeak'] = $ice_stats_source["listener_peak"];
 			$array['listeners'] = $ice_stats_source["listeners"];
 			$array['transmissionFrequency'] = $ice_stats_source["bitrate"];	
@@ -170,11 +179,19 @@ if(!empty($url)) {
 		// remove first element from history
 		array_shift($track_history);
 
-		foreach ($track_history as $line){
-			$track = explode(" - ", $line);
-			$last_artist = explode(";",$track[0])[0];
-			$last_song = str_replace(array("\n", "\r"), '', $track[1]);
-			$array['songHistory'][] = ['artist' => "$last_artist", 'song' => "$last_song"];
+		if($historic) {
+			$i = 0;
+
+			foreach ($track_history as $line){
+				if($i > 4) continue;
+
+				$track = explode(" - ", $line);
+				$last_artist = explode(";",$track[0])[0];
+				$last_song = str_replace(array("\n", "\r"), '', $track[1]);
+				$array['songHistory'][] = ['artist' => "$last_artist", 'song' => "$last_song"];
+
+				$i++;
+			}
 		}
 	} else {
 		$array = ['error' => 'STREAM_TYPE parameter not found'];
