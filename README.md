@@ -1,5 +1,7 @@
 # Player SHOUTCast HTML5
-Responsive web player with lyrics for SHOUTCast streaming. 
+### Responsive web player with lyrics for SHOUTCast and Icecast streaming. 
+
+Thanks to [@andreas5232](https://github.com/andreas5232) for add Icecast support.
 
 ![Responsive Web Player](https://i.imgur.com/x2NP8K8.png)
 
@@ -14,7 +16,7 @@ Responsive web player with lyrics for SHOUTCast streaming.
     - Set your streaming URL (without `/` in the end)
     - Set your API key of Vagalume ([See how to get your API key](https://api.vagalume.com.br/docs/))
 
-### HTML5 Player for SHOUTCast streamings with info like:
+### HTML5 Player for SHOUTCast and Icecast streamings with info like:
 - Current song
 - Historic of played songs (Not tested in SHOUTCast V1)
 - Cover art of the current song ([iTunes API](https://affiliate.itunes.apple.com/resources/documentation/itunes-store-web-service-search-api/))
