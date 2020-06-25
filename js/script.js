@@ -1,7 +1,6 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2017-2019 Guilherme Sávio
 Github: https://github.com/gsavio
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -21,17 +20,6 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-
-const RADIO_NAME = "Brasil Hits";
-
-// URL of SHOUTCast streaming without / on the final, eg: http://streaming.com:8080
-const URL_STREAMING = "http://streaming.brasilhits.com:8050";
-
-// Visit https://api.vagalume.com.br/docs/ yo get your API key
-const API_KEY = "18fe07917957c289983464588aabddfb";
-
-// Set to true to get the last songs played
-const HISTORIC = true;
 
 window.onload = function () {
     var page = new Page;
@@ -246,7 +234,7 @@ function Page() {
     }
 }
 
-var audio = new Audio(URL_STREAMING + '/;');
+var audio = new Audio(URL_STREAMING);
 
 // Player control
 function Player() {
@@ -281,7 +269,7 @@ audio.onplay = function () {
     }
 }
 
-// On play, change the button to play
+// On pause, change the button to play
 audio.onpause = function () {
     var botao = document.getElementById('playerButton');
 
@@ -359,6 +347,11 @@ function getStreamingData() {
     xhttp.onreadystatechange = function () {
 
         if (this.readyState === 4 && this.status === 200) {
+
+            if(this.response.length === 0) {
+                console.log('%cdebug', 'font-size: 22px')
+            }
+
             var data = JSON.parse(this.responseText);
 
             var page = new Page();
@@ -388,7 +381,7 @@ function getStreamingData() {
     var d = new Date();
 
     // Requisition with timestamp to prevent cache on mobile devices
-    xhttp.open('GET', 'https://demo.jatedisse.com.br/api.php?url=' + URL_STREAMING + '&historic=' + HISTORIC + '&t=' + d.getTime(), true);
+    xhttp.open('GET', 'api.php?url=' + URL_STREAMING + '&streamtype=' + STREAMING_TYPE + '&historic=' + HISTORIC + '&next=' + NEXT_SONG + '&t=' + d.getTime(), true);
     xhttp.send();
 }
 
