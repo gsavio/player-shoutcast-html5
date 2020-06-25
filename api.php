@@ -23,6 +23,7 @@ if(!empty($url)) {
 			foreach($urls as $key => $value){
 				$ch[$key] = curl_init($value);
 				curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($ch[$key], CURLOPT_SSL_VERIFYPEER, false);
 				curl_setopt($ch[$key], CURLOPT_USERAGENT, 'Mozilla/5.0');
 				curl_multi_add_handle($curl, $ch[$key]);
 			}
@@ -139,6 +140,7 @@ if(!empty($url)) {
 		// if cURL don't works, use file_get_contents
 		// $curl = curl_init($url);
 		// curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		// curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		// curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0');
 			
 		// $data = curl_exec($curl);
