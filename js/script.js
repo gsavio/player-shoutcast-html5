@@ -75,7 +75,7 @@ function Page() {
         var $artistName = document.querySelectorAll('#historicSong article .music-info .artist');
 
         // Default cover art
-        var urlCoverArt = 'img/bg-capa.jpg';
+        var urlCoverArt = DEFAULT_COVER_ART;
 
         // Get cover art for song history
         var xhttp = new XMLHttpRequest();
@@ -113,7 +113,7 @@ function Page() {
 
     this.refreshCover = function (song = '', artist) {
         // Default cover art
-        var urlCoverArt = 'img/bg-capa.jpg';
+        var urlCoverArt = DEFAULT_COVER_ART;
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -366,7 +366,7 @@ function getStreamingData() {
             // Change the title
             document.title = currentSong + ' - ' + currentArtist + ' | ' + RADIO_NAME;
 
-            if (document.getElementById('currentSong').innerText !== song) {
+            if (document.getElementById('currentSong').innerText !== song.trim()) {
                 page.refreshCover(currentSong, currentArtist);
                 page.refreshCurrentSong(currentSong, currentArtist);
                 page.refreshLyric(currentSong, currentArtist);
