@@ -1,9 +1,9 @@
-# Player SHOUTCast HTML5
+# Player SHOUTCast and Icecast HTML5
 ### Responsive web player with lyrics for SHOUTCast and Icecast streaming. 
 
 Thanks to [@andreas5232](https://github.com/andreas5232) for add Icecast support.
 
-![Responsive Web Player for SHOUTCast](https://i.imgur.com/x2NP8K8.png)
+![Responsive Web Player for SHOUTCast and Icecast](https://i.imgur.com/x2NP8K8.png)
 
 ## Required:
 - PHP >= 5.3
