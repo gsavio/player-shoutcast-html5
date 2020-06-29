@@ -366,7 +366,7 @@ function getStreamingData() {
             // Change the title
             document.title = currentSong + ' - ' + currentArtist + ' | ' + RADIO_NAME;
 
-            if (document.getElementById('currentSong').innerHTML !== song) {
+            if (document.getElementById('currentSong').innerText !== song) {
                 page.refreshCover(currentSong, currentArtist);
                 page.refreshCurrentSong(currentSong, currentArtist);
                 page.refreshLyric(currentSong, currentArtist);
