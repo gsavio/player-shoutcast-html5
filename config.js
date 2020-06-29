@@ -28,6 +28,9 @@ var settings = {
     // Set to true to show the next song to be played. 
     // Make sure your streaming show this information!
     'next_song': false,
+
+    // Path to default cover art when none are found
+    'default_cover_art': 'img/bg-capa.jpg',
 };
 
 const RADIO_NAME = settings.radio_name;
@@ -36,3 +39,4 @@ const STREAMING_TYPE = settings.streaming_type;
 const API_KEY = settings.api_key;
 const HISTORIC = settings.historic;
 const NEXT_SONG = settings.next_song;
+const DEFAULT_COVER_ART = settings.default_cover_art;
