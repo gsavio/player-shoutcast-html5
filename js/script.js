@@ -356,6 +356,8 @@ function getStreamingData() {
 
             var page = new Page();
 
+            var currentSongElement = document.getElementById('currentSong');
+
             // Formating characters to UTF-8
             let song = data.currentSong.replace(/&apos;/g, '\'');
             currentSong = song.replace(/&amp;/g, '&');
@@ -366,7 +368,7 @@ function getStreamingData() {
             // Change the title
             document.title = currentSong + ' - ' + currentArtist + ' | ' + RADIO_NAME;
 
-            if (document.getElementById('currentSong').innerText !== song.trim()) {
+            if (currentSongElement.innerText !== song.trim()) {
                 page.refreshCover(currentSong, currentArtist);
                 page.refreshCurrentSong(currentSong, currentArtist);
                 page.refreshLyric(currentSong, currentArtist);
