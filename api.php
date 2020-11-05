@@ -41,7 +41,7 @@ if(!empty($url)) {
 			$data = $content[0];
 
 			if($nextSong) {
-				$nextSongName = (isset($content[2])) ? explode('-', $content[2]) : '';
+				$nextSongName = (isset($content[2])) ? explode('-', $content[2], 2) : '';
 
 				if(isset($nextSongName[1])) {
 					$array['nextSong'] = ['artist' => $nextSongName[0], 'song' => $nextSongName[1]];
@@ -66,7 +66,7 @@ if(!empty($url)) {
 				$playedSong = substr($song, 0, $cutStr);
 				
 				// Separate artist from song
-				$songData = explode('-', $playedSong);
+				$songData = explode('-', $playedSong, 2);
 				$songNameHistoric = (!empty($songData[1])) ? trim($songData[1]) : '';
 				
 				// Put in the principal array
@@ -104,7 +104,7 @@ if(!empty($url)) {
 			}
 			
 			// Separate artist from song
-			$currentSong = explode('-', $playingNow);
+			$currentSong = explode('-', $playingNow, 2);
 
 			$artist = trim($currentSong[0]);
 
@@ -162,7 +162,7 @@ if(!empty($url)) {
 			$array['listeners'] = $ice_stats_source["listeners"];
 			$array['transmissionFrequency'] = $ice_stats_source["bitrate"];	
 			$currently_playing = $ice_stats_source["title"];
-			$currently_playing = explode(" - ", $currently_playing);
+			$currently_playing = explode(" - ", $currently_playing, 2);
 			$array['currentSong'] = $currently_playing[1];
 			$array['currentArtist'] = explode(";",$currently_playing[0])[0];
 
@@ -187,7 +187,7 @@ if(!empty($url)) {
 			foreach ($track_history as $line){
 				if($i > 4) continue;
 
-				$track = explode(" - ", $line);
+				$track = explode(" - ", $line, 2);
 				$last_artist = explode(";",$track[0])[0];
 				$last_song = str_replace(array("\n", "\r"), '', $track[1]);
 				$array['songHistory'][] = ['artist' => "$last_artist", 'song' => "$last_song"];
