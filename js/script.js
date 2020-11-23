@@ -364,19 +364,21 @@ function getStreamingData() {
 
             var page = new Page();
 
-            var currentSongElement = document.getElementById('currentSong');
+            var currentSongElement = document.getElementById('currentSong').innerHTML.replace(/&apos;/g, '\'');
+            let currentSongEl = currentSongElement.replace(/&amp;/g, '&');
 
             // Formating characters to UTF-8
             let song = data.currentSong.replace(/&apos;/g, '\'');
-            currentSong = song.replace(/&amp;/g, '&');
+            let currentSong = song.replace(/&amp;/g, '&');
 
             let artist = data.currentArtist.replace(/&apos;/g, '\'');
-            currentArtist = artist.replace(/&amp;/g, '&');
-
+            let currentArtist = artist.replace(/&amp;/g, '&');
+            currentArtist = currentArtist.replace('  ', ' '); 
+            
             // Change the title
             document.title = currentSong + ' - ' + currentArtist + ' | ' + RADIO_NAME;
 
-            if (currentSongElement.innerText !== song.trim()) {
+            if (currentSongEl.trim() !== currentSong.trim()) {
                 page.refreshCover(currentSong, currentArtist);
                 page.refreshCurrentSong(currentSong, currentArtist);
                 page.refreshLyric(currentSong, currentArtist);
