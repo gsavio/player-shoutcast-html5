@@ -29,8 +29,8 @@ if(!empty($url)) {
 			}
 			
 			do {
-			curl_multi_exec($curl, $running);
-			curl_multi_select($curl);
+				curl_multi_exec($curl, $running);
+				curl_multi_select($curl);
 			} while ($running > 0);
 			
 			foreach(array_keys($ch) as $key){

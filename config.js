@@ -32,11 +32,3 @@ var settings = {
     // Path to default cover art when none are found
     'default_cover_art': 'img/bg-capa.jpg',
 };
-
-const RADIO_NAME = settings.radio_name;
-const URL_STREAMING = settings.url_streaming;
-const STREAMING_TYPE = settings.streaming_type;
-const API_KEY = settings.api_key;
-const HISTORIC = settings.historic;
-const NEXT_SONG = settings.next_song;
-const DEFAULT_COVER_ART = settings.default_cover_art;
