@@ -161,7 +161,7 @@ if(!empty($url)) {
 			$array['listenersPeak'] = $ice_stats_source["listener_peak"];
 			$array['listeners'] = $ice_stats_source["listeners"];
 			$array['transmissionFrequency'] = $ice_stats_source["bitrate"];	
-			$currently_playing = $ice_stats_source["title"];
+			$currently_playing = $ice_stats_source["yp_currently_playing"];
 			$currently_playing = explode(" - ", $currently_playing, 2);
 			$array['currentSong'] = $currently_playing[1];
 			$array['currentArtist'] = explode(";",$currently_playing[0])[0];
