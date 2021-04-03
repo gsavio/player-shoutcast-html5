@@ -204,7 +204,11 @@ if(!empty($url)) {
 
 $urlHost = $_SERVER['HTTP_HOST'];
 
-header('Access-Control-Allow-Origin: '.$urlHost);
-header('Content-type: application/json', true);
+header('Access-Control-Allow-Origin: *');
+header("Content-Type:application/json; charset=UTF-8");
+header("Cache-Control:no-cache");
+header("Content-Length:1285");
+header("Pragma: no-cache");
+header("Server:Icecast 2.4.2");
 
 echo json_encode($array);
