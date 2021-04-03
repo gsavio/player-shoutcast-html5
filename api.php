@@ -152,7 +152,7 @@ if(!empty($url)) {
 
 			$ice_stats = json_decode($data, true);
 
-			if(is_array($ice_stats["icestats"]["source"])) {
+			if (is_array($ice_stats["icestats"]["source"]) && isset($ice_stats["icestats"]["source"][0])) {
 				$ice_stats_source = $ice_stats["icestats"]["source"][0];
 			} else {
 				$ice_stats_source = $ice_stats["icestats"]["source"];
